@@ -72,6 +72,7 @@
 			this.timerThread = new System.Windows.Forms.Timer(this.components);
 			this.timerClean = new System.Windows.Forms.Timer(this.components);
 			this.timerUpdate = new System.Windows.Forms.Timer(this.components);
+			this.button1 = new System.Windows.Forms.Button();
 			this.tabControl.SuspendLayout();
 			this.tabPageBase.SuspendLayout();
 			this.tabPageAdmin.SuspendLayout();
@@ -96,6 +97,7 @@
 			// 
 			// tabPageBase
 			// 
+			this.tabPageBase.Controls.Add(this.button1);
 			this.tabPageBase.Controls.Add(this.checkBoxLog);
 			this.tabPageBase.Controls.Add(this.labelRedMe2);
 			this.tabPageBase.Controls.Add(this.txtBoxTime);
@@ -498,6 +500,16 @@
 			this.timerUpdate.Interval = 3600000;
 			this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
 			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(370, 79);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(75, 23);
+			this.button1.TabIndex = 24;
+			this.button1.Text = "button1";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -568,6 +580,7 @@
 		private System.Windows.Forms.CheckBox checkBoxLog;
 		private System.Windows.Forms.CheckBox checkBoxShowTime;
 		private System.Windows.Forms.Label labelMs;
+		private System.Windows.Forms.Button button1;
 	}
 }
 

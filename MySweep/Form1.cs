@@ -32,7 +32,7 @@ namespace MySweep
 		// 父句柄
 		public static IntPtr MainHwnd;
 		// 子句柄
-		IntPtr Hwnd;
+		public static IntPtr Hwnd;
 		// 启动的程序PID
 		int pid;
 		// 时间记录
@@ -52,13 +52,13 @@ namespace MySweep
 				ReadConfig();
 
 			// 加载视觉模块
-			loadvpp(strVisPath);
+			//loadvpp(strVisPath);
 			// 注册热键
 			reg_hotkey();
 			// 初始化鼠标驱动
 			dd = new CDD();
 			// DDHID64
-			string dllfile = "";
+			string dllfile = "DDHID64.dll";
 			LoadDllFile(dllfile);
 		}
 
@@ -398,7 +398,7 @@ namespace MySweep
 				}
 			}
 
-			if (ProgramOperation.CheckHwnd(txtBoxHwndName.Text, txtBoxHwndChildName.Text, ref Hwnd))
+			if (ProgramOperation.CheckHwnd("冒险岛2 - 尬萌不限号", "", ref Hwnd))
 			{
 				txtBoxHwnd.Text = Hwnd.ToString();
 				btnCheckHwnd.Enabled = false;
@@ -419,7 +419,7 @@ namespace MySweep
 				LogShowWrite("句柄未找到");
 				return;
 			}
-			if(ProgramOperation.ForwardWindow(MainHwnd))
+			if(ProgramOperation.ForwardWindow(Hwnd))
 			{
 				btnHwndForward.Enabled = false;
 				LogShowWrite("窗体前置成功");
@@ -635,6 +635,21 @@ namespace MySweep
 					LogShowWrite("请输入数字");
 				}
 			}
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			dd.mov(100, 100);
+			dd.btn(1);
+			Thread.Sleep(500);
+			dd.btn(2);
+			dd.key(505, 1);
+			Thread.Sleep(500);
+			dd.key(505, 2);
+			dd.key(100, 1);
+			Thread.Sleep(500);
+			dd.key(100, 2);
+
 		}
 	}
 }

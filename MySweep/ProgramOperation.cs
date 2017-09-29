@@ -30,7 +30,7 @@ namespace MySweep
 			}
 			if (hwnd != IntPtr.Zero)
 			{
-				Form1.MainHwnd = hwnd;
+				Form1.Hwnd = hwnd;
 				return true;
 			}
 			else
@@ -44,7 +44,8 @@ namespace MySweep
 			IntPtr Temp = IntPtr.Zero;
 			if(CheckHwnd(name,ref Temp))
 			{
-				hwnd = DLLInclude.FindWindowEx(Temp, IntPtr.Zero, null, childename);
+				// 查找子句柄
+				//hwnd = DLLInclude.FindWindowEx(Temp, IntPtr.Zero, null, childename);
 				if (hwnd != IntPtr.Zero)
 					return true;
 				else
@@ -62,7 +63,7 @@ namespace MySweep
 			{
 				DLLInclude.ShowWindow(hwnd, 1);
 				DLLInclude.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 1 | 2);
-				DLLInclude.MoveWindow(hwnd, 0, 0, 1032, 815, true);
+				DLLInclude.MoveWindow(hwnd, 0, 0, 800, 600, true);
 			}
 			return true;
 		}

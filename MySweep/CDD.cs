@@ -100,7 +100,7 @@ namespace MySweep
 			str = Marshal.GetDelegateForFunctionPointer(ptr, typeof(pDD_str)) as pDD_str;
 
 			if (ptr.Equals(IntPtr.Zero)) { return -1; }
-			ptr = GetProcAddress(hinst, "DD_todc");
+			ptr = GetProcAddress(hinst, "DD_ini");
 			ini = Marshal.GetDelegateForFunctionPointer(ptr, typeof(pDD_ini)) as pDD_ini;
 			return 1;
 		}

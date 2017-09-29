@@ -57,7 +57,8 @@ namespace MySweep
 			reg_hotkey();
 			// 初始化鼠标驱动
 			dd = new CDD();
-			string dllfile = ReadDataFromReg();
+			// DDHID64
+			string dllfile = "";
 			LoadDllFile(dllfile);
 		}
 
@@ -225,22 +226,6 @@ namespace MySweep
 		}
 
 		// 鼠标驱动初始化
-		private string ReadDataFromReg()
-		{
-			Microsoft.Win32.RegistryKey key;
-			key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\\DD XOFT\\", false);
-			if (key != null)
-			{
-				foreach (string vname in key.GetValueNames())
-				{
-					if ("path" == vname.ToLower())
-					{
-						return key.GetValue(vname, "").ToString();
-					}
-				}
-			}
-			return "";
-		}
 		private void LoadDllFile(string dllfile)
 		{
 			System.IO.FileInfo fi = new System.IO.FileInfo(dllfile);
@@ -251,7 +236,7 @@ namespace MySweep
 			}
 
 			int ret = dd.Load(dllfile);
-
+			dd.ini(0);
 			return;
 		}
 		private void MouseMoveClick(Point pos,int time)

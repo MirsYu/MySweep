@@ -37,7 +37,7 @@ namespace MySweep
 		public delegate int pDD_mov(int x, int y);
 		public delegate int pDD_movR(int dx, int dy);
 		public delegate int pDD_str(string str);
-		public delegate int pDD_todc(int vkcode);
+		public delegate int pDD_ini(int val);
 
 		public pDD_btn btn;          // 鼠标点击
 		public pDD_whl whl;          // 鼠标滚轮
@@ -45,18 +45,7 @@ namespace MySweep
 		public pDD_movR movR;   // 鼠标相对移动
 		public pDD_key key;          // 键盘按键
 		public pDD_str str;            //  键盘字符
-		public pDD_todc todc;      // 标准虚拟键码转DD码
-
-		//增强版功能
-		public delegate Int32 pDD_MouseMove(IntPtr hwnd, Int32 x, Int32 y);
-		public delegate Int32 pDD_SnapPic(IntPtr hwnd, Int32 x, Int32 y, Int32 w, Int32 h);
-		public delegate Int32 pDD_PickColor(IntPtr hwnd, Int32 x, Int32 y, Int32 mode);
-		public delegate IntPtr pDD_GetActiveWindow();
-
-		public pDD_MouseMove MouseMove;                           //鼠标移动
-		public pDD_SnapPic SnapPic;                                         //  抓图
-		public pDD_PickColor PickColor;                                    //取色
-		public pDD_GetActiveWindow GetActiveWindow;          //取激活窗口句柄
+		public pDD_ini ini;      // 初始化
 
 		private System.IntPtr m_hinst;
 
@@ -112,25 +101,7 @@ namespace MySweep
 
 			if (ptr.Equals(IntPtr.Zero)) { return -1; }
 			ptr = GetProcAddress(hinst, "DD_todc");
-			todc = Marshal.GetDelegateForFunctionPointer(ptr, typeof(pDD_todc)) as pDD_todc;
-
-			//下面四个函数，只有在增强版中才可用
-			ptr = GetProcAddress(hinst, "DD_MouseMove"); //鼠标移动
-			if (!ptr.Equals(IntPtr.Zero)) MouseMove = Marshal.GetDelegateForFunctionPointer(ptr, typeof(pDD_MouseMove)) as pDD_MouseMove;
-
-			ptr = GetProcAddress(hinst, "DD_SnapPic");        //抓取图片
-			if (!ptr.Equals(IntPtr.Zero)) SnapPic = Marshal.GetDelegateForFunctionPointer(ptr, typeof(pDD_SnapPic)) as pDD_SnapPic;
-
-			ptr = GetProcAddress(hinst, "DD_PickColor");      //取色
-			if (!ptr.Equals(IntPtr.Zero)) PickColor = Marshal.GetDelegateForFunctionPointer(ptr, typeof(pDD_PickColor)) as pDD_PickColor;
-
-			ptr = GetProcAddress(hinst, "DD_GetActiveWindow");    //获取激活窗口句柄
-			if (!ptr.Equals(IntPtr.Zero)) GetActiveWindow = Marshal.GetDelegateForFunctionPointer(ptr, typeof(pDD_GetActiveWindow)) as pDD_GetActiveWindow;
-
-			if (MouseMove == null || SnapPic == null || PickColor == null || GetActiveWindow == null)
-			{
-				return 0;
-			}
+			ini = Marshal.GetDelegateForFunctionPointer(ptr, typeof(pDD_ini)) as pDD_ini;
 			return 1;
 		}
 	}

@@ -115,7 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CDD.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="DLLInclude.cs" />
     <Compile Include="FileOperation.cs" />
     <Compile Include="Form1.cs">

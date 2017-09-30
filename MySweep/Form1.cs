@@ -31,8 +31,6 @@ namespace MySweep
 		string strConfigPath;
 		// 父句柄
 		public static IntPtr MainHwnd;
-		// 子句柄
-		public static IntPtr Hwnd;
 		// 启动的程序PID
 		int pid;
 		// 时间记录
@@ -80,120 +78,77 @@ namespace MySweep
 			}
 		}
 
+		public static void Acquisition()
+		{
+			// 截图
+			ProgramOperation.ALT(MainHwnd);
+		}
+
 		private bool ProcessMode1()
 		{
-			LogShowWrite("模式1启动");
-			Bitmap image;
-			CogImage24PlanarColor imageSource;
-			CogImageConvertTool convertTool = block.Tools["CogImageConvertTool1"] as CogImageConvertTool;
-			CogPMAlignMultiTool pmMultiTool = block.Tools["CogPMAlignMultiTool1"] as CogPMAlignMultiTool;
-			CogPMAlignResults PMAResult;
-			CogPMAlignResult buyPageResult;
-			CogPMAlignResult buyCenterResult;
-			CogPMAlignResult objBuyButtonResult;
-			CogPMAlignResult numSelectButtonResult;
-			CogPMAlignResult buyUpdateResult;
-			CogPMAlignResult lookPetBtnResult;
-
-			Point mouseClick = new Point();
-			image = null;
-			imageSource = null;
-			image = ProgramOperation.ALT(Hwnd);
-			if (image != null) LogShowWrite("截图成功");
-			else { LogShowWrite("截图失败"); return false; }
-			imageSource = new CogImage24PlanarColor(image);
-			if(imageSource != null) LogShowWrite("灰度图转换成功");
-			else { LogShowWrite("灰度图转换失败"); return false; }
-			convertTool.InputImage = imageSource;
-			convertTool.Run();
-			block.Run();
-			this.cogRecordDisplay1.Image = (CogImage8Grey)convertTool.OutputImage;
-			this.cogRecordDisplay1.Record = block.CreateLastRunRecord();
-			this.cogRecordDisplay1.AutoFit = true;
-			// 一次只点击一次
-			PMAResult = block.Outputs["Results_PMAlignResults"].Value as CogPMAlignResults;
-			// 遍历结果
-			objBuyButtonResult = CheckName(PMAResult, "物品购买按钮");
-			numSelectButtonResult = CheckName(PMAResult, "数量选择按钮");
-			buyPageResult = CheckName(PMAResult, "摆摊界面购买按钮");
-			buyCenterResult = CheckName(PMAResult, "商会按钮(用于刷新)");
-			buyUpdateResult = CheckName(PMAResult,"摆摊按钮");
-			lookPetBtnResult = CheckName(PMAResult, "公示宠物按钮");
-
-			if (objBuyButtonResult != null && numSelectButtonResult != null)
+			Point pos = new Point();
+			// 视觉模块
+			// 获取是否在黑市界面
+			bool isBuy = false;
+			bool isFullName = false;
+			if (isBuy)
 			{
-				mouseClick.X = (int)(numSelectButtonResult.GetPose().TranslationX);
-				mouseClick.Y = (int)(numSelectButtonResult.GetPose().TranslationY);
-				MouseMoveClick(CalcPointScreenpos(mouseClick), int.Parse(txtBoxTime.Text));
-				mouseClick.X = (int)(objBuyButtonResult.GetPose().TranslationX);
-				mouseClick.Y = (int)(objBuyButtonResult.GetPose().TranslationY);
-				MouseMoveClick(CalcPointScreenpos(mouseClick), 1);
-				LogShowWrite("物品数量选择界面");
-			}
-			else if (lookPetBtnResult != null)
-			{
-				mouseClick.X = (int)(lookPetBtnResult.GetPose().TranslationX);
-				mouseClick.Y = (int)(lookPetBtnResult.GetPose().TranslationY);
-				MouseMoveClick(CalcPointScreenpos(mouseClick), int.Parse(txtBoxTime.Text));
-				LogShowWrite("关注界面");
-			}
-			else if (buyPageResult != null)
-			{
-				#region 2种模式
-				if (radioBtnLow.Checked == true)
+				// 首先判断输入框里有没有指定的物品名称
+				if (isFullName)
 				{
-					if (int.Parse(block.Outputs["Result"].Value.ToString()) <= int.Parse(txtBoxPriceLow.Text) &&
-					block.Outputs["Result"].Value.ToString() != "??")
+					// 找到搜索按钮
+					pos = new Point(100, 100); 
+					MouseMoveClick(pos, 1);  // 点击一次搜索按钮
+
+					// 获取每个多少价格
+					int pice = 0;
+					if (pice < int.Parse(txtBoxPriceLow.Text))
 					{
-						mouseClick.X = (int)(double.Parse(block.Outputs["X1"].Value.ToString()));
-						mouseClick.Y = (int)(double.Parse(block.Outputs["Y1"].Value.ToString()));
-						MouseMoveClick(CalcPointScreenpos(mouseClick), 1);
-						LogShowWrite("选中了商品");
-						LogShowWrite("购买成功当前价格:" + block.Outputs["Result"].Value.ToString() + ",目标价格为:" + int.Parse(txtBoxPriceLow.Text));
-					}
-					else
-					{
-						LogShowWrite("购买失败当前价格:" + block.Outputs["Result"].Value.ToString() + ",目标价格为:" + int.Parse(txtBoxPriceLow.Text));
+						// 找到购买按钮
+						pos = new Point(100, 100);
+						MouseMoveClick(pos, 1);
+						// 弹出数量确认框
+						// 分别找到 +1 +10 +100 最大 按钮
+						// 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
+						// 比如是+100按钮
+						pos = new Point(100, 100);
+						MouseMoveClick(pos, 3); // 点击+100 3次
+						pos = new Point(100, 100);
+						MouseMoveClick(pos, 3); // 点击购买
+
+						// 至此购买完毕
 					}
 				}
-				else if (radioBtnSweep.Checked == true)
+				else
 				{
-					mouseClick.X = (int)(double.Parse(block.Outputs["X1"].Value.ToString()));
-					mouseClick.Y = (int)(double.Parse(block.Outputs["Y1"].Value.ToString()));
-					MouseMoveClick(CalcPointScreenpos(mouseClick), 1);
-					LogShowWrite("选中了商品");
-					LogShowWrite("购买成功当前价格:" + block.Outputs["Result"].Value.ToString() + ",目标价格为:" + int.Parse(txtBoxPriceLow.Text));
+					// 找到输入框的位置
+					pos = new Point(100, 100);
+					MouseMoveClick(pos, 1);
+					dd.str("");//物品名称
 				}
-				#endregion
-				mouseClick.X = (int)(buyPageResult.GetPose().TranslationX);
-				mouseClick.Y = (int)(buyPageResult.GetPose().TranslationY);
-				MouseMoveClick(CalcPointScreenpos(mouseClick), 1);
-				LogShowWrite("摆摊界面购买按钮");
-			}
-
-			Thread.Sleep(int.Parse(txtBoxDelay.Text));
-			if (buyUpdateResult != null)
-			{
-				mouseClick.X = (int)(buyUpdateResult.GetPose().TranslationX);
-				mouseClick.Y = (int)(buyUpdateResult.GetPose().TranslationY);
-				MouseMoveClick(CalcPointScreenpos(mouseClick), 1);
-				LogShowWrite("摆摊界面按钮");
-				return true;
-			}
-			else if (buyCenterResult != null)
-			{
-				mouseClick.X = (int)(buyCenterResult.GetPose().TranslationX);
-				mouseClick.Y = (int)(buyCenterResult.GetPose().TranslationY);
-				MouseMoveClick(CalcPointScreenpos(mouseClick), 1);
-				LogShowWrite("刷新界面按钮");
-				return true;
 			}
 			else
 			{
-				image.Save(strFailCheck + TimeToFile() + ".png");
-				LogShowWrite("未知错误");
-				return false;
+				// 保证目标窗口是焦点(因为窗体已经前置  dd鼠标去点一下)
+				pos = new Point(100, 100);
+				MouseMoveClick(pos, 1);
+				// 按5下ESC(可能会到设置界面 这时候按b是否会弹出黑市界面)
+				for (int i = 0; i < 5; i++)
+				{
+					// 所有时间间隔待测试
+					DDkey(100, 500); // esc
+				}
+				DDkey(505, 500); // b
 			}
+			return false;
+		}
+
+		// 键盘按键
+		private void DDkey(int KeyCode,int delayTime)
+		{
+			dd.key(KeyCode, 1);
+			Thread.Sleep(delayTime);
+			dd.key(KeyCode, 2);
 		}
 
 		private void loadvpp(string filepath)
@@ -218,7 +173,7 @@ namespace MySweep
 		private Point CalcPointScreenpos(Point pos)
 		{
 			DLLInclude.RECT rect = new DLLInclude.RECT();
-			DLLInclude.GetWindowRect(Hwnd, out rect);
+			DLLInclude.GetWindowRect(MainHwnd, out rect);
 			Point newPos = new Point();
 			newPos.X = rect.Left + pos.X;
 			newPos.Y = rect.Top + pos.Y;
@@ -388,19 +343,19 @@ namespace MySweep
 			MainHwnd = ProgramOperation.GetWnd(pid, txtBoxHwndName.Text);
 			if (MainHwnd != IntPtr.Zero)
 			{
-				Hwnd = DLLInclude.FindWindowEx(MainHwnd, IntPtr.Zero, null, txtBoxHwndChildName.Text);
-				if (Hwnd != IntPtr.Zero)
+				MainHwnd = DLLInclude.FindWindowEx(MainHwnd, IntPtr.Zero, null, txtBoxHwndChildName.Text);
+				if (MainHwnd != IntPtr.Zero)
 				{
-					txtBoxHwnd.Text = Hwnd.ToString();
+					txtBoxHwnd.Text = MainHwnd.ToString();
 					btnCheckHwnd.Enabled = false;
 					LogShowWrite("句柄查找成功");
 					return;
 				}
 			}
 
-			if (ProgramOperation.CheckHwnd("冒险岛2 - 尬萌不限号", "", ref Hwnd))
+			if (ProgramOperation.CheckHwnd("冒险岛2 - 尬萌不限号", "", ref MainHwnd))
 			{
-				txtBoxHwnd.Text = Hwnd.ToString();
+				txtBoxHwnd.Text = MainHwnd.ToString();
 				btnCheckHwnd.Enabled = false;
 				LogShowWrite("句柄查找成功");
 			}
@@ -413,13 +368,13 @@ namespace MySweep
 
 		private void btnHwndForward_Click(object sender, EventArgs e)
 		{
-			if(Hwnd == IntPtr.Zero)
+			if(MainHwnd == IntPtr.Zero)
 			{
 				btnCheckHwnd.Enabled = true;
 				LogShowWrite("句柄未找到");
 				return;
 			}
-			if(ProgramOperation.ForwardWindow(Hwnd))
+			if(ProgramOperation.ForwardWindow(MainHwnd))
 			{
 				btnHwndForward.Enabled = false;
 				LogShowWrite("窗体前置成功");
@@ -608,7 +563,7 @@ namespace MySweep
 		private void btnGetPicture_Click(object sender, EventArgs e)
 		{
 			Bitmap image;
-			image = ProgramOperation.ALT(Hwnd);
+			image = ProgramOperation.ALT(MainHwnd);
 			if (image != null) LogShowWrite("截图成功");
 			else { LogShowWrite("截图失败"); return ; }
 			image.Save(strFailCheck + TimeToFile() + ".png");

@@ -30,7 +30,7 @@ namespace MySweep
 			}
 			if (hwnd != IntPtr.Zero)
 			{
-				Form1.Hwnd = hwnd;
+				Form1.MainHwnd = hwnd;
 				return true;
 			}
 			else

@@ -165,8 +165,10 @@ namespace MySweep
         int InputX, InputY;
         int BuyX, BuyY;
         int InputCountX, InputCountY;
-        int CheckX, CheckY;
-        private bool ProcessMode1()
+		int CheckX, CheckY;
+		int YesX, YesY;
+		int MaxX, MaxY;
+		private bool ProcessMode1()
 		{
 			Point pos = new Point();
 			// 视觉模块
@@ -196,32 +198,36 @@ namespace MySweep
                                 pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
                                 MouseMoveClick(pos, 1);
                                 // 输入数量
-                                pos = new Point(InputCountX, InputCountY);
+                                pos = new Point(MaxX, MaxY);
                                 MouseMoveClick(pos, 1);
+								/*
                                 Char[] chars = visiondata.Counts[i].ToString().ToCharArray();
                                 for (int n = 0; n < chars.Length; n++)
                                 {
                                     dd.str(chars[n].ToString());
                                     Thread.Sleep(20);
-                                }
+                                }*/
                                 // 购买
                                 pos = new Point(BuyX, BuyY);
                                 MouseMoveClick(pos, 1);
-                                // 确认
-                                pos = new Point(CheckX, CheckY);
-                                MouseMoveClick(pos, 1);
-                                // 弹出数量确认框
-                                // 分别找到 +1 +10 +100 最大 按钮
-                                // 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
-                                // 比如是+100按钮
-                                /*
+								// 确认
+								pos = new Point(CheckX, CheckY);
+								MouseMoveClick(pos, 1);
+								// 确认
+								pos = new Point(YesX, YesY);
+								MouseMoveClick(pos, 1);
+								// 弹出数量确认框
+								// 分别找到 +1 +10 +100 最大 按钮
+								// 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
+								// 比如是+100按钮
+								/*
                                 pos = new Point(100, 100);
                                 MouseMoveClick(pos, 3); // 点击+100 3次
                                 pos = new Point(100, 100);
                                 MouseMoveClick(pos, 3); // 点击购买*/
 
-                                // 至此购买完毕
-                            }
+								// 至此购买完毕
+							}
 
                         }
                     }
@@ -327,7 +333,7 @@ namespace MySweep
 				dd.btn(2);
 			}
 			LogShowWrite("(" + pos.X + "," + pos.Y + ")" + "点击了"+time+"下");
-            Thread.Sleep(10);
+            Thread.Sleep(200);
 		}
 
 		#region "热键设置相关代码"

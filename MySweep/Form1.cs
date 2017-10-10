@@ -195,13 +195,6 @@ namespace MySweep
 								// 输入数量
 								pos = new Point(MaxX, MaxY);
 								MouseMoveClick(pos, 1);
-								/*
-                                Char[] chars = visiondata.Counts[i].ToString().ToCharArray();
-                                for (int n = 0; n < chars.Length; n++)
-                                {
-                                    dd.str(chars[n].ToString());
-                                    Thread.Sleep(20);
-                                }*/
 								// 购买
 								pos = new Point(BuyX, BuyY);
 								MouseMoveClick(pos, 1);
@@ -226,7 +219,6 @@ namespace MySweep
 
 						}
 					}
-
 				}
 				else
 				{
@@ -276,16 +268,6 @@ namespace MySweep
 			dd.key(KeyCode, 2);
 		}
 
-		private void loadvpp(string filepath)
-		{
-			object obj = CogSerializer.LoadObjectFromFile(filepath);
-			block = (CogToolBlock)obj;
-			if (block != null)
-			{
-				LogShowWrite("视觉模块加载成功");
-			}
-		}
-
 		private string TimeToFile()
 		{
 			string time = DateTime.Now.ToString();
@@ -293,16 +275,6 @@ namespace MySweep
 			time = time.Replace(':', '_');
 			time = time.Replace(' ', '@');
 			return time;
-		}
-
-		private Point CalcPointScreenpos(Point pos)
-		{
-			DLLInclude.RECT rect = new DLLInclude.RECT();
-			DLLInclude.GetWindowRect(MainHwnd, out rect);
-			Point newPos = new Point();
-			newPos.X = rect.Left + pos.X;
-			newPos.Y = rect.Top + pos.Y;
-			return newPos;
 		}
 
 		// 鼠标驱动初始化
@@ -380,18 +352,6 @@ namespace MySweep
 		}
 
 		#endregion
-
-		private CogPMAlignResult CheckName(CogPMAlignResults result, string name)
-		{
-			for (int i = 0; i < result.Count; i++)
-			{
-				if (result[i].ModelName == name)
-				{
-					return result[i];
-				}
-			}
-			return null;
-		}
 
 		private void Form1_Load(object sender, EventArgs e)
 		{

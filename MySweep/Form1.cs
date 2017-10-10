@@ -108,6 +108,7 @@ namespace MySweep
 			}
 		}
 
+        Bitmap image1, image2;
 		private void VisionRun(int index)
 		{
 			//Run
@@ -115,11 +116,11 @@ namespace MySweep
 			try
 			{
 				ArrayList data = new ArrayList();
-				Bitmap image;
-				image = ProgramOperation.ALT(MainHwnd);
-				if (image != null) LogShowWrite("截图成功");
-				else { LogShowWrite("截图失败"); return; }
-				Vision.Run(image, index, out data);
+                image2 = ProgramOperation.ALT(MainHwnd);
+                if (image2 != null && image2 != image1)
+                { LogShowWrite("截图成功"); image1 = image2; }
+                else { LogShowWrite("截图失败"); return; }
+				Vision.Run(image1, index, out data);
 				if (index == 1)
 				{
 					Parsedata(data);
@@ -152,9 +153,11 @@ namespace MySweep
 				//UpdateGrid(data);
 			}
 			catch
-			{
-
-			}
+            {
+                timerThread.Stop();
+                timerClean.Stop();
+                timerUpdate.Stop();
+            }
 		}
 
 		bool IsGameExit = false;
@@ -188,12 +191,13 @@ namespace MySweep
 				// 首先判断输入框里有没有指定的物品名称
 				if (IsExitInputName)
 				{
-					// 找到搜索按钮
+                    // 找到搜索按钮
 					pos = new Point(SearchX, SearchY);
 					MouseMoveClick(pos, 1);  // 点击一次搜索按钮
+                    Thread.Sleep(300);
 
-					// 获取每个多少价格
-					VisionRun(1);
+                    // 获取每个多少价格
+                    VisionRun(1);
 					if(!(visiondata.IsSuccess[0] || visiondata.IsSuccess[1] ||
                             visiondata.IsSuccess[2] || visiondata.IsSuccess[3] ||
                             visiondata.IsSuccess[4] || visiondata.IsSuccess[5] || visiondata.IsSuccess[6]))
@@ -209,8 +213,10 @@ namespace MySweep
                             visiondata.IsSuccess[2] && visiondata.IsSuccess[3] &&
                             visiondata.IsSuccess[4] && visiondata.IsSuccess[5] && visiondata.IsSuccess[6])
 						{
-							if (visiondata.Prices[i] < int.Parse(txtBoxPriceLow.Text)&&visiondata.Prices[i] != 0&& IsBuy)
+							if (visiondata.Prices[i] <= int.Parse(txtBoxPriceLow.Text)&&visiondata.Prices[i] !=1)
 							{
+                                File.AppendAllText("1.txt", visiondata.Prices[i].ToString() + "\r\n");
+                                //return false;
                                 //Buy
 								pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
 								MouseMoveClick(pos, 1);
@@ -223,12 +229,15 @@ namespace MySweep
 								// 确认
 								pos = new Point(CheckX, CheckY);
 								MouseMoveClick(pos, 1);
+                                Thread.Sleep(400);
                                 // Yes
                                 pos = new Point(YesX, YesY);
                                 MouseMoveClick(pos, 1);
                                 // FailCheck
                                 pos = new Point(FailCheckX, FailCheckY);
                                 MouseMoveClick(pos, 1);
+
+                                Thread.Sleep(1000);
                                 // 弹出数量确认框
                                 // 分别找到 +1 +10 +100 最大 按钮
                                 // 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
@@ -553,30 +562,34 @@ namespace MySweep
 		}
 
 		System.Diagnostics.Stopwatch stopwatch = new Stopwatch();
+        object lockobj = new object();
 		private void timerThread_Tick(object sender, EventArgs e)
 		{
-			timerThread.Enabled = false;
-			if (checkBoxShowTime.Checked) stopwatch.Start();
-			if (!ProcessMode1())
-			{
-				LogShowWrite("遇到了未知错误");
-			}
-			else
-			{
+            lock (lockobj)
+            {
+                timerThread.Enabled = false;
+                if (checkBoxShowTime.Checked) stopwatch.Start();
+                if (!ProcessMode1())
+                {
+                    LogShowWrite("遇到了未知错误");
+                }
+                else
+                {
 
-			}
+                }
 
 
-			if (checkBoxShowTime.Checked)
-			{
-				stopwatch.Stop();
-				TimeSpan timespan = stopwatch.Elapsed; //  获取当前实例测量得出的总时间
-				double milliseconds = timespan.TotalMilliseconds;  //  总毫秒数
+                if (checkBoxShowTime.Checked)
+                {
+                    stopwatch.Stop();
+                    TimeSpan timespan = stopwatch.Elapsed; //  获取当前实例测量得出的总时间
+                    double milliseconds = timespan.TotalMilliseconds;  //  总毫秒数
 
-				labelMs.Text = milliseconds - time + "ms";
-				time = milliseconds;
-			}
-			timerThread.Enabled = true;
+                    labelMs.Text = milliseconds - time + "ms";
+                    time = milliseconds;
+                }
+                timerThread.Enabled = true;
+            }
 		}
 
 		private void timerClean_Tick(object sender, EventArgs e)
@@ -757,12 +770,12 @@ namespace MySweep
 				int m = 0;
 				for (int i = 0 + m * 7; i < 7 + m * 7; i++)
 				{
-					visiondata.Counts.Add(Convert.ToInt32(list[i]));
+					visiondata.Prices.Add(Convert.ToInt32(list[i]));
 				}
 				m++;
 				for (int i = 0 + m * 7; i < 7 + m * 7; i++)
 				{
-					visiondata.Prices.Add(Convert.ToInt32(list[i]));
+					visiondata.Counts.Add(Convert.ToInt32(list[i]));
 				}
 				m++;
 				for (int i = 0 + m * 7; i < 7 + m * 7; i++)

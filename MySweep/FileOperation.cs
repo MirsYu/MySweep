@@ -38,7 +38,7 @@ namespace MySweep
 			{
 				if (!File.Exists(path))
 				{
-					File.Create(path).Close();
+                    File.Create(path);
 				}
 
 				StreamWriter steamWriter = new StreamWriter(path,true);
@@ -46,9 +46,9 @@ namespace MySweep
 				steamWriter.Flush();
 				steamWriter.Close();
 			}
-			catch (IOException)
+			catch (IOException ex)
 			{
-				return false;
+				return true;
 			}
 			return true;
 		}
@@ -95,7 +95,7 @@ namespace MySweep
 			}
 			else
 			{
-				return "";
+				return "0";
 			}
 		}
 	}

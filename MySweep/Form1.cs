@@ -49,13 +49,13 @@ namespace MySweep
 
 		public Form1()
 		{
-			strLogPath = AppDomain.CurrentDomain.BaseDirectory + "Log" + "\\" + TimeToFile() + ".log";
+			strLogPath = AppDomain.CurrentDomain.BaseDirectory + "Log" + "\\" + TimeToFile() + ".txt";
 			strVisPath = AppDomain.CurrentDomain.BaseDirectory + "图像识别模块" + "\\" + "RunBlock.vpp";
 			strFailCheck = AppDomain.CurrentDomain.BaseDirectory + "无法识别图片" + "\\";
 			strConfigPath = AppDomain.CurrentDomain.BaseDirectory + "配置文件" + "\\" + "config.ini";
 			if (!Directory.Exists(strLogPath))
 			{
-				Directory.CreateDirectory(strLogPath);
+				File.Create(strLogPath);
 			}
 			if (!Directory.Exists(strFailCheck))
 			{
@@ -136,11 +136,15 @@ namespace MySweep
 					InputY = Convert.ToInt32(Vision.block.Outputs["InputY"].Value);
 					BuyX = Convert.ToInt32(Vision.block.Outputs["BuyX"].Value);
 					BuyY = Convert.ToInt32(Vision.block.Outputs["BuyY"].Value);
-					InputCountX = Convert.ToInt32(Vision.block.Outputs["InputCountX"].Value);
-					InputCountY = Convert.ToInt32(Vision.block.Outputs["InputCountY"].Value);
-					CheckX = Convert.ToInt32(Vision.block.Outputs["CheckX"].Value);
-					CheckY = Convert.ToInt32(Vision.block.Outputs["CheckY"].Value);
-				}
+                    InputCountX = Convert.ToInt32(Vision.block.Outputs["InputCountX"].Value);
+                    InputCountY = Convert.ToInt32(Vision.block.Outputs["InputCountY"].Value);
+                    CheckX = Convert.ToInt32(Vision.block.Outputs["CheckX"].Value);
+                    CheckY = Convert.ToInt32(Vision.block.Outputs["CheckY"].Value);
+                    YesX = Convert.ToInt32(Vision.block.Outputs["YesX"].Value);
+                    YesY = Convert.ToInt32(Vision.block.Outputs["YesY"].Value);
+                    MaxX = Convert.ToInt32(Vision.block.Outputs["MaxX"].Value);
+                    MaxY = Convert.ToInt32(Vision.block.Outputs["MaxY"].Value);
+                }
 				//cogRecordDisplay1.Image = outimage;
 				//cogRecordDisplay1.Record = record;
 				//UpdateGrid(data);
@@ -191,12 +195,13 @@ namespace MySweep
 						IsSearchButtonExit = false;
 						return false;
 					}
-					for (int i = 0; i < 7; i++)
+					for (int i = 0; i < 1; i++)
 					{
 						if (visiondata.IsSuccess[i])
 						{
 							if (visiondata.Prices[i] < int.Parse(txtBoxPriceLow.Text))
 							{
+                                //Buy
 								pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
 								MouseMoveClick(pos, 1);
 								// 输入数量
@@ -208,7 +213,7 @@ namespace MySweep
 								// 确认
 								pos = new Point(CheckX, CheckY);
 								MouseMoveClick(pos, 1);
-								// 确认
+								// Yes
 								pos = new Point(YesX, YesY);
 								MouseMoveClick(pos, 1);
 								// 弹出数量确认框
@@ -278,10 +283,7 @@ namespace MySweep
 
 		private string TimeToFile()
 		{
-			string time = DateTime.Now.ToString();
-			time = time.Replace("/", "_");
-			time = time.Replace(':', '_');
-			time = time.Replace(' ', '@');
+			string time = DateTime.Now.ToString("yyyyMMdd");
 			return time;
 		}
 
@@ -308,7 +310,7 @@ namespace MySweep
 				dd.btn(1);
 				Thread.Sleep(new Random().Next(0, 5));
 				dd.btn(2);
-				Thread.Sleep(200);
+				Thread.Sleep(500);
 			}
 			LogShowWrite("(" + pos.X + "," + pos.Y + ")" + "点击了" + time + "下");
 		}
@@ -570,7 +572,7 @@ namespace MySweep
 
 		private void timerUpdate_Tick(object sender, EventArgs e)
 		{
-			strLogPath = AppDomain.CurrentDomain.BaseDirectory + "Log" + "\\" + TimeToFile() + ".log";
+			strLogPath = AppDomain.CurrentDomain.BaseDirectory + "Log" + "\\" + TimeToFile() + ".txt";
 		}
 
 		private void WriteConfig()
@@ -652,7 +654,7 @@ namespace MySweep
 			}
 			txtBoxHwndName.Text = FileOperation.ReadConfig(strConfigPath, "Hwnd");
 			txtBoxHwndChildName.Text = FileOperation.ReadConfig(strConfigPath, "ChildHwnd");
-			txtBoxDelay.Text = FileOperation.ReadConfig(strConfigPath, "DelayTime");
+            txtBoxDelay.Text = "500";
 			txtBoxPriceLow.Text = "70";
 			txtBoxTime.Text = FileOperation.ReadConfig(strConfigPath, "ClickTime");
 			LogShowWrite("配置文件读取成功");

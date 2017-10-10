@@ -141,7 +141,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
-    <None Include="bin\Debug\配置文件\config.ini" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -151,7 +150,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="bin\Debug\图像识别模块\RunBlock.vpp" />
+    <None Include="bin\Debug\图像识别模块\RunBlock.vpp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="AxCognexDisplay">
@@ -209,6 +210,7 @@
     <Folder Include="bin\Debug\Log\2017_10_10%409_06_08.log\" />
     <Folder Include="bin\Debug\Log\2017_10_10%409_06_31.log\" />
     <Folder Include="bin\Debug\无法识别图片\" />
+    <Folder Include="bin\Debug\配置文件\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

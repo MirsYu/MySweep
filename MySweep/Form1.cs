@@ -144,6 +144,8 @@ namespace MySweep
                     YesY = Convert.ToInt32(Vision.block.Outputs["YesY"].Value);
                     MaxX = Convert.ToInt32(Vision.block.Outputs["MaxX"].Value);
                     MaxY = Convert.ToInt32(Vision.block.Outputs["MaxY"].Value);
+                    FailCheckX = Convert.ToInt32(Vision.block.Outputs["FailCheckX"].Value);
+                    FailCheckY = Convert.ToInt32(Vision.block.Outputs["FailCheckY"].Value);
                 }
 				//cogRecordDisplay1.Image = outimage;
 				//cogRecordDisplay1.Record = record;
@@ -159,22 +161,26 @@ namespace MySweep
 		bool IsCenterExit = false;
 		bool IsSearchButtonExit = false;
 		bool IsExitInputName = false;
+        bool IsBuy = false;
 		int SearchX, SearchY;
 		int InputX, InputY;
 		int BuyX, BuyY;
 		int InputCountX, InputCountY;
 		int CheckX, CheckY;
 		int YesX, YesY;
-		int MaxX, MaxY;
+        int MaxX, MaxY;
+        int FailCheckX, FailCheckY;
+        int MoveDelayTime = 100;
 
-		private bool ProcessMode1()
+        private bool ProcessMode1()
 		{
-			Point pos = new Point();
+            IsBuy = false;
+            Point pos = new Point();
 			// 视觉模块
 			// 获取是否在黑市界面
 			if (!(IsGameExit && IsCenterExit && IsSearchButtonExit))
 			{
-				//VisionRun(0);
+				VisionRun(0);
 				//return false;
 			}
 			if (IsCenterExit && IsSearchButtonExit)
@@ -188,7 +194,9 @@ namespace MySweep
 
 					// 获取每个多少价格
 					VisionRun(1);
-					if(!visiondata.IsSuccess[0])
+					if(!(visiondata.IsSuccess[0] || visiondata.IsSuccess[1] ||
+                            visiondata.IsSuccess[2] || visiondata.IsSuccess[3] ||
+                            visiondata.IsSuccess[4] || visiondata.IsSuccess[5] || visiondata.IsSuccess[6]))
 					{
 						IsGameExit = false;
 						IsCenterExit = false;
@@ -197,9 +205,11 @@ namespace MySweep
 					}
 					for (int i = 0; i < 1; i++)
 					{
-						if (visiondata.IsSuccess[i])
+						if (visiondata.IsSuccess[0]&&visiondata.IsSuccess[1]&&
+                            visiondata.IsSuccess[2] && visiondata.IsSuccess[3] &&
+                            visiondata.IsSuccess[4] && visiondata.IsSuccess[5] && visiondata.IsSuccess[6])
 						{
-							if (visiondata.Prices[i] < int.Parse(txtBoxPriceLow.Text))
+							if (visiondata.Prices[i] < int.Parse(txtBoxPriceLow.Text)&&visiondata.Prices[i] != 0&& IsBuy)
 							{
                                 //Buy
 								pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
@@ -213,21 +223,24 @@ namespace MySweep
 								// 确认
 								pos = new Point(CheckX, CheckY);
 								MouseMoveClick(pos, 1);
-								// Yes
-								pos = new Point(YesX, YesY);
-								MouseMoveClick(pos, 1);
-								// 弹出数量确认框
-								// 分别找到 +1 +10 +100 最大 按钮
-								// 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
-								// 比如是+100按钮
-								/*
-                                pos = new Point(100, 100);
-                                MouseMoveClick(pos, 3); // 点击+100 3次
-                                pos = new Point(100, 100);
-                                MouseMoveClick(pos, 3); // 点击购买*/
+                                // Yes
+                                pos = new Point(YesX, YesY);
+                                MouseMoveClick(pos, 1);
+                                // FailCheck
+                                pos = new Point(FailCheckX, FailCheckY);
+                                MouseMoveClick(pos, 1);
+                                // 弹出数量确认框
+                                // 分别找到 +1 +10 +100 最大 按钮
+                                // 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
+                                // 比如是+100按钮
 
-								// 至此购买完毕
-							}
+                                /* pos = new Point(100, 100);
+                                 MouseMoveClick(pos, 3); // 点击+100 3次
+                                 pos = new Point(100, 100);
+                                 MouseMoveClick(pos, 3); // 点击购买*/
+
+                                // 至此购买完毕
+                            }
 
 						}
 					}
@@ -310,7 +323,7 @@ namespace MySweep
 				dd.btn(1);
 				Thread.Sleep(new Random().Next(0, 5));
 				dd.btn(2);
-				Thread.Sleep(500);
+				Thread.Sleep(MoveDelayTime);
 			}
 			LogShowWrite("(" + pos.X + "," + pos.Y + ")" + "点击了" + time + "下");
 		}
@@ -522,8 +535,9 @@ namespace MySweep
 
 		private void btnBegin_Click(object sender, EventArgs e)
 		{
-			// 写入配置文件
-			WriteConfig();
+            MoveDelayTime = Convert.ToInt32(textBox1.Text);
+            // 写入配置文件
+            WriteConfig();
 			// 开启线程
 			LogShowWrite("模式1即将启动");
 			timerThread.Start();
@@ -765,6 +779,7 @@ namespace MySweep
 				{
 					visiondata.Ys.Add(Convert.ToInt32(list[i]));
 				}
+                IsBuy = (bool)Vision.block.Outputs["IsBuy"].Value;
 			}
 			else
 			{

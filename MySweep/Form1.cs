@@ -189,6 +189,7 @@ namespace MySweep
 						IsGameExit = false;
 						IsCenterExit = false;
 						IsSearchButtonExit = false;
+						return false;
 					}
 					for (int i = 0; i < 7; i++)
 					{

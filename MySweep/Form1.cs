@@ -259,7 +259,11 @@ namespace MySweep
 					// 找到输入框的位置
 					pos = new Point(InputX, InputY);
 					MouseMoveClick(pos, 1);
-					Thread.Sleep(10);
+                    Thread.Sleep(10);
+                    dd.str("h");//物品名称
+                    Thread.Sleep(10);
+                    dd.str("d");//物品名称
+                    Thread.Sleep(10);
 					dd.str("m");//物品名称
 					Thread.Sleep(10);
 					dd.str("n");//物品名称

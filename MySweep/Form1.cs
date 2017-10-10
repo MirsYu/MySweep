@@ -17,14 +17,14 @@ using System.Windows.Forms;
 
 namespace MySweep
 {
-    public struct VisionData
-    {
-        public List<int> Prices;
-        public List<int> Counts;
-        public List<int> Xs;
-        public List<int> Ys;
-        public List<bool> IsSuccess;
-    }
+	public struct VisionData
+	{
+		public List<int> Prices;
+		public List<int> Counts;
+		public List<int> Xs;
+		public List<int> Ys;
+		public List<bool> IsSuccess;
+	}
 	public partial class Form1 : Form
 	{
 		// 鼠标
@@ -45,7 +45,7 @@ namespace MySweep
 		int pid;
 		// 时间记录
 		double time = 0;
-        
+
 
 		public Form1()
 		{
@@ -53,42 +53,42 @@ namespace MySweep
 			strVisPath = AppDomain.CurrentDomain.BaseDirectory + "图像识别模块" + "\\" + "RunBlock.vpp";
 			strFailCheck = AppDomain.CurrentDomain.BaseDirectory + "无法识别图片" + "\\";
 			strConfigPath = AppDomain.CurrentDomain.BaseDirectory + "配置文件" + "\\" + "config.ini";
-            if (!Directory.Exists(strLogPath))
-            {
-                Directory.CreateDirectory(strLogPath);
-            }
-            if (!Directory.Exists(strFailCheck))
-            {
-                Directory.CreateDirectory(strFailCheck);
-            }
-            if (!File.Exists(strVisPath))
-            {
-                File.Create(strVisPath);
-            }
-            if (!File.Exists(strConfigPath))
-            {
-                File.Create(strConfigPath);
-            }
-            string strConfigResult = FileOperation.Read(strConfigPath);
+			if (!Directory.Exists(strLogPath))
+			{
+				Directory.CreateDirectory(strLogPath);
+			}
+			if (!Directory.Exists(strFailCheck))
+			{
+				Directory.CreateDirectory(strFailCheck);
+			}
+			if (!File.Exists(strVisPath))
+			{
+				File.Create(strVisPath);
+			}
+			if (!File.Exists(strConfigPath))
+			{
+				File.Create(strConfigPath);
+			}
+			string strConfigResult = FileOperation.Read(strConfigPath);
 			InitializeComponent();
 			if (strConfigResult == "")
 				WriteConfig();
 			else
 				ReadConfig();
 
-            // 加载视觉模块
-            Vision.loadvpp(strVisPath);
-            cogToolBlockEditV21.Subject = Vision.block;
-            // 注册热键
-            reg_hotkey();
+			// 加载视觉模块
+			Vision.loadvpp(strVisPath);
+			cogToolBlockEditV21.Subject = Vision.block;
+			// 注册热键
+			reg_hotkey();
 			// 初始化鼠标驱动
 			dd = new CDD();
 			// DDHID64
 			string dllfile = "DDHID64.dll";
 			LoadDllFile(dllfile);
-            updatemethod = new delegateUpdateGUI(UpdateGrid);
+			updatemethod = new delegateUpdateGUI(UpdateGrid);
 
-        }
+		}
 
 		private void LogShowWrite(string log)
 		{
@@ -108,98 +108,93 @@ namespace MySweep
 			}
 		}
 
-		public static void Acquisition()
+		private void VisionRun(int index)
 		{
-			// 截图
-			ProgramOperation.ALT(MainHwnd);
+			//Run
+
+			try
+			{
+				ArrayList data = new ArrayList();
+				Bitmap image;
+				image = ProgramOperation.ALT(MainHwnd);
+				if (image != null) LogShowWrite("截图成功");
+				else { LogShowWrite("截图失败"); return; }
+				Vision.Run(image, index, out data);
+				if (index == 1)
+				{
+					Parsedata(data);
+				}
+				else
+				{
+					IsGameExit = (bool)Vision.block.Outputs["GameExit"].Value;
+					IsCenterExit = (bool)Vision.block.Outputs["CenterExit"].Value;
+					IsSearchButtonExit = (bool)Vision.block.Outputs["SearchButtonExit"].Value;
+					IsExitInputName = (bool)Vision.block.Outputs["IsExitInputName"].Value;
+					SearchX = Convert.ToInt32(Vision.block.Outputs["SearchX"].Value);
+					SearchY = Convert.ToInt32(Vision.block.Outputs["SearchY"].Value);
+					InputX = Convert.ToInt32(Vision.block.Outputs["InputX"].Value);
+					InputY = Convert.ToInt32(Vision.block.Outputs["InputY"].Value);
+					BuyX = Convert.ToInt32(Vision.block.Outputs["BuyX"].Value);
+					BuyY = Convert.ToInt32(Vision.block.Outputs["BuyY"].Value);
+					InputCountX = Convert.ToInt32(Vision.block.Outputs["InputCountX"].Value);
+					InputCountY = Convert.ToInt32(Vision.block.Outputs["InputCountY"].Value);
+					CheckX = Convert.ToInt32(Vision.block.Outputs["CheckX"].Value);
+					CheckY = Convert.ToInt32(Vision.block.Outputs["CheckY"].Value);
+				}
+				//cogRecordDisplay1.Image = outimage;
+				//cogRecordDisplay1.Record = record;
+				//UpdateGrid(data);
+			}
+			catch
+			{
+
+			}
 		}
 
-        private void VisionRun(int index)
-        {
-            //Run
-
-            try
-            {
-                ArrayList data = new ArrayList();
-                Bitmap image;
-                image = ProgramOperation.ALT(MainHwnd);
-                if (image != null) LogShowWrite("截图成功");
-                else { LogShowWrite("截图失败"); return; }
-                Vision.Run(image, index, out data);
-                if (index == 1)
-                {
-                    Parsedata(data);
-                }
-                else
-                {
-                    IsGameExit = (bool)Vision.block.Outputs["GameExit"].Value;
-                    IsCenterExit = (bool)Vision.block.Outputs["CenterExit"].Value;
-                    IsSearchButtonExit = (bool)Vision.block.Outputs["SearchButtonExit"].Value;
-                    IsExitInputName = (bool)Vision.block.Outputs["IsExitInputName"].Value;
-                    SearchX = Convert.ToInt32(Vision.block.Outputs["SearchX"].Value);
-                    SearchY = Convert.ToInt32(Vision.block.Outputs["SearchY"].Value);
-                    InputX = Convert.ToInt32(Vision.block.Outputs["InputX"].Value);
-                    InputY = Convert.ToInt32(Vision.block.Outputs["InputY"].Value);
-                    BuyX = Convert.ToInt32(Vision.block.Outputs["BuyX"].Value);
-                    BuyY = Convert.ToInt32(Vision.block.Outputs["BuyY"].Value);
-                    InputCountX = Convert.ToInt32(Vision.block.Outputs["InputCountX"].Value);
-                    InputCountY = Convert.ToInt32(Vision.block.Outputs["InputCountY"].Value);
-                    CheckX = Convert.ToInt32(Vision.block.Outputs["CheckX"].Value);
-                    CheckY = Convert.ToInt32(Vision.block.Outputs["CheckY"].Value);
-                }
-                //cogRecordDisplay1.Image = outimage;
-                //cogRecordDisplay1.Record = record;
-                //UpdateGrid(data);
-            }
-            catch
-            {
-
-            }
-        }
-
-        bool IsGameExit = false;
-        bool IsCenterExit = false;
-        bool IsSearchButtonExit = false;
-        bool IsExitInputName = false;
-        int SearchX, SearchY;
-        int InputX, InputY;
-        int BuyX, BuyY;
-        int InputCountX, InputCountY;
+		bool IsGameExit = false;
+		bool IsCenterExit = false;
+		bool IsSearchButtonExit = false;
+		bool IsExitInputName = false;
+		int SearchX, SearchY;
+		int InputX, InputY;
+		int BuyX, BuyY;
+		int InputCountX, InputCountY;
 		int CheckX, CheckY;
 		int YesX, YesY;
 		int MaxX, MaxY;
+
 		private bool ProcessMode1()
 		{
 			Point pos = new Point();
 			// 视觉模块
 			// 获取是否在黑市界面
-            if(!(IsGameExit&&IsCenterExit&&IsSearchButtonExit))
-            {
-                //VisionRun(0);
-                //return false;
-            }
-			if (IsCenterExit&&IsSearchButtonExit)
+			if (!(IsGameExit && IsCenterExit && IsSearchButtonExit))
+			{
+				//VisionRun(0);
+				//return false;
+			}
+			if (IsCenterExit && IsSearchButtonExit)
 			{
 				// 首先判断输入框里有没有指定的物品名称
 				if (IsExitInputName)
 				{
 					// 找到搜索按钮
-					pos = new Point(SearchX, SearchY); 
+					pos = new Point(SearchX, SearchY);
 					MouseMoveClick(pos, 1);  // 点击一次搜索按钮
 
-                    // 获取每个多少价格
-                    VisionRun(1);
-                    for (int i = 0; i < 7; i++)
-                    {
-                        if (visiondata.IsSuccess[i])
-                        {
-                            if (visiondata.Prices[i] < int.Parse(txtBoxPriceLow.Text))
-                            {
-                                pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
-                                MouseMoveClick(pos, 1);
-                                // 输入数量
-                                pos = new Point(MaxX, MaxY);
-                                MouseMoveClick(pos, 1);
+					// 获取每个多少价格
+					VisionRun(1);
+					for (int i = 0; i < 7; i++)
+					{
+						if (visiondata.IsSuccess[i])
+						{
+							if (visiondata.Prices[i] < int.Parse(txtBoxPriceLow.Text))
+							{
+								pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
+								MouseMoveClick(pos, 1);
+								// 输入数量
+								pos = new Point(MaxX, MaxY);
+								MouseMoveClick(pos, 1);
 								/*
                                 Char[] chars = visiondata.Counts[i].ToString().ToCharArray();
                                 for (int n = 0; n < chars.Length; n++)
@@ -207,9 +202,9 @@ namespace MySweep
                                     dd.str(chars[n].ToString());
                                     Thread.Sleep(20);
                                 }*/
-                                // 购买
-                                pos = new Point(BuyX, BuyY);
-                                MouseMoveClick(pos, 1);
+								// 购买
+								pos = new Point(BuyX, BuyY);
+								MouseMoveClick(pos, 1);
 								// 确认
 								pos = new Point(CheckX, CheckY);
 								MouseMoveClick(pos, 1);
@@ -229,30 +224,30 @@ namespace MySweep
 								// 至此购买完毕
 							}
 
-                        }
-                    }
-					
+						}
+					}
+
 				}
 				else
 				{
 					// 找到输入框的位置
 					pos = new Point(InputX, InputY);
 					MouseMoveClick(pos, 1);
-                    Thread.Sleep(10);
-                    dd.str("m");//物品名称
-                    Thread.Sleep(10);
-                    dd.str("n");//物品名称
-                    Thread.Sleep(10);
-                    dd.str("j");//物品名称
-                    Thread.Sleep(10);
-                    dd.str("j");//物品名称
-                    Thread.Sleep(10);
-                    dd.str("1");//物品名称
-                    Thread.Sleep(100);
-                    //dd.str("玛瑙结晶");//物品名称
+					Thread.Sleep(10);
+					dd.str("m");//物品名称
+					Thread.Sleep(10);
+					dd.str("n");//物品名称
+					Thread.Sleep(10);
+					dd.str("j");//物品名称
+					Thread.Sleep(10);
+					dd.str("j");//物品名称
+					Thread.Sleep(10);
+					dd.str("1");//物品名称
+					Thread.Sleep(100);
+					//dd.str("玛瑙结晶");//物品名称
 
-                    VisionRun(0);
-                }
+					VisionRun(0);
+				}
 			}
 			else
 			{
@@ -265,16 +260,16 @@ namespace MySweep
 					// 所有时间间隔待测试
 					DDkey(100, 500); // esc
 				}
-                Thread.Sleep(100);
+				Thread.Sleep(100);
 				DDkey(505, 500); // b
 
-                VisionRun(0);
-            }
+				VisionRun(0);
+			}
 			return false;
 		}
 
 		// 键盘按键
-		private void DDkey(int KeyCode,int delayTime)
+		private void DDkey(int KeyCode, int delayTime)
 		{
 			dd.key(KeyCode, 1);
 			Thread.Sleep(delayTime);
@@ -285,7 +280,7 @@ namespace MySweep
 		{
 			object obj = CogSerializer.LoadObjectFromFile(filepath);
 			block = (CogToolBlock)obj;
-			if (block !=null)
+			if (block != null)
 			{
 				LogShowWrite("视觉模块加载成功");
 			}
@@ -324,7 +319,7 @@ namespace MySweep
 			dd.ini(0);
 			return;
 		}
-		private void MouseMoveClick(Point pos,int time)
+		private void MouseMoveClick(Point pos, int time)
 		{
 			dd.mov(pos.X, pos.Y);
 			for (int i = 0; i < time; i++)
@@ -332,8 +327,8 @@ namespace MySweep
 				dd.btn(1);
 				dd.btn(2);
 			}
-			LogShowWrite("(" + pos.X + "," + pos.Y + ")" + "点击了"+time+"下");
-            Thread.Sleep(200);
+			LogShowWrite("(" + pos.X + "," + pos.Y + ")" + "点击了" + time + "下");
+			Thread.Sleep(200);
 		}
 
 		#region "热键设置相关代码"
@@ -386,7 +381,7 @@ namespace MySweep
 
 		#endregion
 
-		private CogPMAlignResult CheckName(CogPMAlignResults result,string name)
+		private CogPMAlignResult CheckName(CogPMAlignResults result, string name)
 		{
 			for (int i = 0; i < result.Count; i++)
 			{
@@ -499,13 +494,13 @@ namespace MySweep
 
 		private void btnHwndForward_Click(object sender, EventArgs e)
 		{
-			if(MainHwnd == IntPtr.Zero)
+			if (MainHwnd == IntPtr.Zero)
 			{
 				btnCheckHwnd.Enabled = true;
 				LogShowWrite("句柄未找到");
 				return;
 			}
-			if(ProgramOperation.ForwardWindow(MainHwnd))
+			if (ProgramOperation.ForwardWindow(MainHwnd))
 			{
 				btnHwndForward.Enabled = false;
 				LogShowWrite("窗体前置成功");
@@ -575,7 +570,7 @@ namespace MySweep
 		private void timerThread_Tick(object sender, EventArgs e)
 		{
 			timerThread.Enabled = false;
-			if(checkBoxShowTime.Checked) stopwatch.Start();
+			if (checkBoxShowTime.Checked) stopwatch.Start();
 			if (!ProcessMode1())
 			{
 				LogShowWrite("遇到了未知错误");
@@ -584,14 +579,14 @@ namespace MySweep
 			{
 
 			}
-           
 
-            if (checkBoxShowTime.Checked)
+
+			if (checkBoxShowTime.Checked)
 			{
 				stopwatch.Stop();
 				TimeSpan timespan = stopwatch.Elapsed; //  获取当前实例测量得出的总时间
 				double milliseconds = timespan.TotalMilliseconds;  //  总毫秒数
-				
+
 				labelMs.Text = milliseconds - time + "ms";
 				time = milliseconds;
 			}
@@ -620,7 +615,7 @@ namespace MySweep
 			write += "[LowPrice]=" + txtBoxPriceLow.Text + "\r\n";
 			write += "[Log]=" + checkBoxLog.Checked + "\r\n";
 			write += "[ShowTime]=" + checkBoxShowTime.Checked + "\r\n";
-			write += "[Head0]=" + "韭菜馅的脑子勾过芡的心"+"\r\n";
+			write += "[Head0]=" + "韭菜馅的脑子勾过芡的心" + "\r\n";
 			write += "[Head1]=" + "最假的是眼泪，最真的看不见" + "\r\n";
 			write += "[Head2]=" + "我期待，辉煌灿烂后黑暗的深邃，我渴望，喧哗飞扬后宁静的永恒，就像烈焰散尽的灰烟，自由自在，四处飘荡" + "\r\n";
 			write += "[Head3]=" + "祝你永远不孤独" + "\r\n";
@@ -669,7 +664,7 @@ namespace MySweep
 				radioBtnSweep.Checked = false;
 				radioBtnLow.Checked = true;
 			}
-			if(FileOperation.ReadConfig(strConfigPath, "Log") == "True")
+			if (FileOperation.ReadConfig(strConfigPath, "Log") == "True")
 			{
 				checkBoxLog.Checked = true;
 			}
@@ -688,7 +683,7 @@ namespace MySweep
 			txtBoxHwndName.Text = FileOperation.ReadConfig(strConfigPath, "Hwnd");
 			txtBoxHwndChildName.Text = FileOperation.ReadConfig(strConfigPath, "ChildHwnd");
 			txtBoxDelay.Text = FileOperation.ReadConfig(strConfigPath, "DelayTime");
-            txtBoxPriceLow.Text = "70";
+			txtBoxPriceLow.Text = "70";
 			txtBoxTime.Text = FileOperation.ReadConfig(strConfigPath, "ClickTime");
 			LogShowWrite("配置文件读取成功");
 		}
@@ -698,7 +693,7 @@ namespace MySweep
 			Bitmap image;
 			image = ProgramOperation.ALT(MainHwnd);
 			if (image != null) LogShowWrite("截图成功");
-			else { LogShowWrite("截图失败"); return ; }
+			else { LogShowWrite("截图失败"); return; }
 			image.Save(strFailCheck + TimeToFile() + ".png");
 		}
 
@@ -725,189 +720,174 @@ namespace MySweep
 			}
 		}
 
-		private void button1_Click(object sender, EventArgs e)
+		private void Run_Click(object sender, EventArgs e)
 		{
-			dd.mov(100, 100);
-			dd.btn(1);
-			Thread.Sleep(500);
-			dd.btn(2);
-			dd.key(505, 1);
-			Thread.Sleep(500);
-			dd.key(505, 2);
-			dd.key(100, 1);
-			Thread.Sleep(500);
-			dd.key(100, 2);
+			try
+			{
+				ICogImage outimage = new CogImage8Grey();
+				ICogRecord record;
+				ArrayList data = new ArrayList();
+				Bitmap image;
+				image = ProgramOperation.ALT(MainHwnd);
+				if (image != null) LogShowWrite("截图成功");
+				else { LogShowWrite("截图失败"); return; }
+				Vision.Run(image, 0, out data, out outimage, out record);
+				cogRecordDisplay1.Image = outimage;
+				cogRecordDisplay1.Record = record;
+			}
+			catch
+			{
 
+			}
 		}
 
-        private void Run_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                ICogImage outimage = new CogImage8Grey();
-                ICogRecord record;
-                ArrayList data = new ArrayList();
-                Bitmap image;
-                image = ProgramOperation.ALT(MainHwnd);
-                if (image != null) LogShowWrite("截图成功");
-                else { LogShowWrite("截图失败"); return; }
-                Vision.Run(image, 0, out data, out outimage, out record);
-                cogRecordDisplay1.Image = outimage;
-                cogRecordDisplay1.Record = record;
-            }
-            catch
-            {
+		Thread thread;
+		VisionData visiondata = new VisionData();
+		private delegate void delegateUpdateGUI(ArrayList list);
+		private delegateUpdateGUI updatemethod;
+		private void UpdateGrid(ArrayList list)
+		{
+			dataGridView1.Rows.Clear();
+			int count = 7;
+			for (int i = 0; i < count; i++)
+			{
+				dataGridView1.Rows.Add();
+				dataGridView1.Rows[i].Cells[1].Value = list[count * 0 + i];
+				dataGridView1.Rows[i].Cells[0].Value = list[count * 1 + i];
+				dataGridView1.Rows[i].Cells[2].Value = list[count * 2 + i];
+			}
+		}
 
-            }
-        }
+		private void Parsedata(ArrayList list)
+		{
+			if (list.Count == 35)
+			{
+				visiondata.Counts = new List<int>();
+				visiondata.Prices = new List<int>();
+				visiondata.IsSuccess = new List<bool>();
+				visiondata.Xs = new List<int>();
+				visiondata.Ys = new List<int>();
 
-        Thread thread;
-        VisionData visiondata = new VisionData();
-        private delegate void delegateUpdateGUI(ArrayList list);
-        private delegateUpdateGUI updatemethod;
-        private void UpdateGrid(ArrayList list)
-        {
-            dataGridView1.Rows.Clear();
-            int count = 7;
-            for(int i=0;i<count;i++)
-            {
-                dataGridView1.Rows.Add();
-                dataGridView1.Rows[i].Cells[1].Value = list[count * 0 + i];
-                dataGridView1.Rows[i].Cells[0].Value = list[count * 1 + i];
-                dataGridView1.Rows[i].Cells[2].Value = list[count * 2 + i];
-            }
-        }
+				int m = 0;
+				for (int i = 0 + m * 7; i < 7 + m * 7; i++)
+				{
+					visiondata.Counts.Add(Convert.ToInt32(list[i]));
+				}
+				m++;
+				for (int i = 0 + m * 7; i < 7 + m * 7; i++)
+				{
+					visiondata.Prices.Add(Convert.ToInt32(list[i]));
+				}
+				m++;
+				for (int i = 0 + m * 7; i < 7 + m * 7; i++)
+				{
+					visiondata.IsSuccess.Add(Convert.ToBoolean(list[i]));
+				}
+				m++;
+				for (int i = 0 + m * 7; i < 7 + m * 7; i++)
+				{
+					visiondata.Xs.Add(Convert.ToInt32(list[i]));
+				}
+				m++;
+				for (int i = 0 + m * 7; i < 7 + m * 7; i++)
+				{
+					visiondata.Ys.Add(Convert.ToInt32(list[i]));
+				}
+			}
+			else
+			{
+				throw new Exception("Data Count Error");
+			}
+		}
 
-        private void Parsedata(ArrayList list)
-        {
-            if(list.Count == 35)
-            {
-                visiondata.Counts = new List<int>();
-                visiondata.Prices = new List<int>();
-                visiondata.IsSuccess = new List<bool>();
-                visiondata.Xs = new List<int>();
-                visiondata.Ys = new List<int>();
+		bool isContinueRun = false;
+		private void ContinueRun()
+		{
+			while (isContinueRun)
+			{
+				try
+				{
+					ICogImage outimage = new CogImage8Grey();
+					ICogRecord record;
+					ArrayList data = new ArrayList();
+					Bitmap image;
+					image = ProgramOperation.ALT(MainHwnd);
+					if (image != null) LogShowWrite("截图成功");
+					else { LogShowWrite("截图失败"); return; }
+					Vision.Run(image, 1, out data, out outimage, out record);
+					cogRecordDisplay1.Image = outimage;
+					cogRecordDisplay1.Record = record;
+					this.Invoke(updatemethod, data);
+				}
+				catch
+				{
 
-                int m = 0;
-                for(int i=0 + m*7;i<7+m*7;i++)
-                {
-                    visiondata.Counts.Add(Convert.ToInt32(list[i]));
-                }
-                m++;
-                for (int i = 0 + m * 7; i < 7 + m * 7; i++)
-                {
-                    visiondata.Prices.Add(Convert.ToInt32(list[i]));
-                }
-                m++;
-                for (int i = 0 + m * 7; i < 7 + m * 7; i++)
-                {
-                    visiondata.IsSuccess.Add(Convert.ToBoolean(list[i]));
-                }
-                m++;
-                for (int i = 0 + m * 7; i < 7 + m * 7; i++)
-                {
-                    visiondata.Xs.Add(Convert.ToInt32(list[i]));
-                }
-                m++;
-                for (int i = 0 + m * 7; i < 7 + m * 7; i++)
-                {
-                    visiondata.Ys.Add(Convert.ToInt32(list[i]));
-                }
-            }
-            else
-            {
-                throw new Exception("Data Count Error");
-            }
-        }
+				}
+			}
+		}
 
-        bool isContinueRun = false;
-        private void ContinueRun()
-        {
-            while(isContinueRun)
-            {
-                try
-                {
-                    ICogImage outimage = new CogImage8Grey();
-                    ICogRecord record;
-                    ArrayList data = new ArrayList();
-                    Bitmap image;
-                    image = ProgramOperation.ALT(MainHwnd);
-                    if (image != null) LogShowWrite("截图成功");
-                    else { LogShowWrite("截图失败"); return; }
-                    Vision.Run(image, 1, out data, out outimage, out record);
-                    cogRecordDisplay1.Image = outimage;
-                    cogRecordDisplay1.Record = record;
-                    this.Invoke(updatemethod, data);
-                }
-                catch
-                {
+		private void button2_Click(object sender, EventArgs e)
+		{
 
-                }
-            }
-        }
+			try
+			{
+				ICogImage outimage = new CogImage8Grey();
+				ICogRecord record;
+				ArrayList data = new ArrayList();
+				Bitmap image;
+				image = ProgramOperation.ALT(MainHwnd);
+				if (image != null) LogShowWrite("截图成功");
+				else { LogShowWrite("截图失败"); return; }
+				Vision.Run(image, 0, out data, out outimage, out record);
+				cogRecordDisplay1.Image = outimage;
+				cogRecordDisplay1.Record = record;
+			}
+			catch
+			{
 
-        private void button2_Click(object sender, EventArgs e)
-        {
+			}
+		}
 
-            try
-            {
-                ICogImage outimage = new CogImage8Grey();
-                ICogRecord record;
-                ArrayList data = new ArrayList();
-                Bitmap image;
-                image = ProgramOperation.ALT(MainHwnd);
-                if (image != null) LogShowWrite("截图成功");
-                else { LogShowWrite("截图失败"); return; }
-                Vision.Run(image, 0, out data, out outimage, out record);
-                cogRecordDisplay1.Image = outimage;
-                cogRecordDisplay1.Record = record;
-            }
-            catch
-            {
+		private void button3_Click(object sender, EventArgs e)
+		{
 
-            }
-        }
+			try
+			{
+				ICogImage outimage = new CogImage8Grey();
+				ICogRecord record;
+				ArrayList data = new ArrayList();
+				Bitmap image;
+				image = ProgramOperation.ALT(MainHwnd);
+				if (image != null) LogShowWrite("截图成功");
+				else { LogShowWrite("截图失败"); return; }
+				Vision.Run(image, 1, out data, out outimage, out record);
+				cogRecordDisplay1.Image = outimage;
+				cogRecordDisplay1.Record = record;
+				UpdateGrid(data);
+			}
+			catch
+			{
 
-        private void button3_Click(object sender, EventArgs e)
-        {
+			}
+		}
 
-            try
-            {
-                ICogImage outimage = new CogImage8Grey();
-                ICogRecord record;
-                ArrayList data = new ArrayList();
-                Bitmap image;
-                image = ProgramOperation.ALT(MainHwnd);
-                if (image != null) LogShowWrite("截图成功");
-                else { LogShowWrite("截图失败"); return; }
-                Vision.Run(image, 1, out data, out outimage, out record);
-                cogRecordDisplay1.Image = outimage;
-                cogRecordDisplay1.Record = record;
-                UpdateGrid(data);
-            }
-            catch
-            {
+		private void button4_Click(object sender, EventArgs e)
+		{
+			isContinueRun = true;
+			thread = new Thread(ContinueRun);
+			thread.Start();
+		}
 
-            }
-        }
+		private void button5_Click(object sender, EventArgs e)
+		{
+			isContinueRun = false;
+			thread.Abort();
+			thread.Join();
+		}
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            isContinueRun = true;
-            thread = new Thread(ContinueRun);
-            thread.Start();
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            isContinueRun = false;
-            thread.Abort();
-            thread.Join();
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            isContinueRun = false;
-        }
-    }
+		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			isContinueRun = false;
+		}
+	}
 }

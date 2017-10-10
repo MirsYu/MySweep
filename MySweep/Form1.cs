@@ -264,6 +264,7 @@ namespace MySweep
 		private void DDkey(int KeyCode, int delayTime)
 		{
 			dd.key(KeyCode, 1);
+			delayTime += new Random().Next(1, 100);
 			Thread.Sleep(delayTime);
 			dd.key(KeyCode, 2);
 		}
@@ -294,13 +295,15 @@ namespace MySweep
 		private void MouseMoveClick(Point pos, int time)
 		{
 			dd.mov(pos.X, pos.Y);
+			Thread.Sleep(new Random().Next(0, 10));
 			for (int i = 0; i < time; i++)
 			{
 				dd.btn(1);
+				Thread.Sleep(new Random().Next(0, 5));
 				dd.btn(2);
+				Thread.Sleep(200);
 			}
 			LogShowWrite("(" + pos.X + "," + pos.Y + ")" + "点击了" + time + "下");
-			Thread.Sleep(200);
 		}
 
 		#region "热键设置相关代码"

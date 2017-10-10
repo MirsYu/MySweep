@@ -184,6 +184,12 @@ namespace MySweep
 
 					// 获取每个多少价格
 					VisionRun(1);
+					if(!visiondata.IsSuccess[0])
+					{
+						IsGameExit = false;
+						IsCenterExit = false;
+						IsSearchButtonExit = false;
+					}
 					for (int i = 0; i < 7; i++)
 					{
 						if (visiondata.IsSuccess[i])

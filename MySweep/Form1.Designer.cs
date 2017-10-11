@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageBase = new System.Windows.Forms.TabPage();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.checkBoxLog = new System.Windows.Forms.CheckBox();
             this.labelRedMe2 = new System.Windows.Forms.Label();
             this.txtBoxTime = new System.Windows.Forms.TextBox();
@@ -83,8 +85,8 @@
             this.timerThread = new System.Windows.Forms.Timer(this.components);
             this.timerClean = new System.Windows.Forms.Timer(this.components);
             this.timerUpdate = new System.Windows.Forms.Timer(this.components);
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.checkBoxMail = new System.Windows.Forms.CheckBox();
+            this.timerEmail = new System.Windows.Forms.Timer(this.components);
             this.tabControl.SuspendLayout();
             this.tabPageBase.SuspendLayout();
             this.tabPageAdmin.SuspendLayout();
@@ -106,13 +108,14 @@
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(561, 289);
+            this.tabControl.Size = new System.Drawing.Size(561, 300);
             this.tabControl.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl.TabIndex = 0;
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
             // tabPageBase
             // 
+            this.tabPageBase.Controls.Add(this.checkBoxMail);
             this.tabPageBase.Controls.Add(this.textBox1);
             this.tabPageBase.Controls.Add(this.label5);
             this.tabPageBase.Controls.Add(this.checkBoxLog);
@@ -142,10 +145,27 @@
             this.tabPageBase.Location = new System.Drawing.Point(4, 22);
             this.tabPageBase.Name = "tabPageBase";
             this.tabPageBase.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBase.Size = new System.Drawing.Size(553, 263);
+            this.tabPageBase.Size = new System.Drawing.Size(553, 274);
             this.tabPageBase.TabIndex = 0;
             this.tabPageBase.Text = "基础功能";
             this.tabPageBase.UseVisualStyleBackColor = true;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(98, 134);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 21);
+            this.textBox1.TabIndex = 24;
+            this.textBox1.Text = "400";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(20, 136);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(83, 12);
+            this.label5.TabIndex = 25;
+            this.label5.Text = "按键间隔(ms):";
             // 
             // checkBoxLog
             // 
@@ -478,7 +498,7 @@
             this.tabPageRead.Controls.Add(this.cogRecordDisplay1);
             this.tabPageRead.Location = new System.Drawing.Point(4, 22);
             this.tabPageRead.Name = "tabPageRead";
-            this.tabPageRead.Size = new System.Drawing.Size(553, 263);
+            this.tabPageRead.Size = new System.Drawing.Size(553, 326);
             this.tabPageRead.TabIndex = 2;
             this.tabPageRead.Text = "图片识别功能";
             this.tabPageRead.UseVisualStyleBackColor = true;
@@ -632,28 +652,25 @@
             this.timerUpdate.Interval = 3600000;
             this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
             // 
-            // textBox1
+            // checkBoxMail
             // 
-            this.textBox1.Location = new System.Drawing.Point(98, 134);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 21);
-            this.textBox1.TabIndex = 24;
-            this.textBox1.Text = "400";
+            this.checkBoxMail.AutoSize = true;
+            this.checkBoxMail.Location = new System.Drawing.Point(232, 136);
+            this.checkBoxMail.Name = "checkBoxMail";
+            this.checkBoxMail.Size = new System.Drawing.Size(84, 16);
+            this.checkBoxMail.TabIndex = 26;
+            this.checkBoxMail.Text = "收邮件模式";
+            this.checkBoxMail.UseVisualStyleBackColor = true;
             // 
-            // label5
+            // timerEmail
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(20, 136);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(83, 12);
-            this.label5.TabIndex = 25;
-            this.label5.Text = "按键间隔(ms):";
+            this.timerEmail.Tick += new System.EventHandler(this.timerEmail_Tick);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(561, 289);
+            this.ClientSize = new System.Drawing.Size(561, 300);
             this.Controls.Add(this.tabControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -736,6 +753,8 @@
         public System.Windows.Forms.TextBox txtBoxPriceLow;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox checkBoxMail;
+        private System.Windows.Forms.Timer timerEmail;
     }
 }
 

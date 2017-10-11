@@ -176,59 +176,59 @@ namespace MySweep
         int MoveDelayTime = 100;
 
         private bool ProcessMode1()
-		{
+        {
             IsBuy = false;
             Point pos = new Point();
-			// 视觉模块
-			// 获取是否在黑市界面
-			if (!(IsGameExit && IsCenterExit && IsSearchButtonExit))
-			{
-				VisionRun(0);
-				//return false;
-			}
-			if (IsCenterExit && IsSearchButtonExit)
-			{
-				// 首先判断输入框里有没有指定的物品名称
-				if (IsExitInputName)
-				{
+            // 视觉模块
+            // 获取是否在黑市界面
+            if (!(IsGameExit && IsCenterExit && IsSearchButtonExit))
+            {
+                VisionRun(0);
+                //return false;
+            }
+            if (IsCenterExit && IsSearchButtonExit)
+            {
+                // 首先判断输入框里有没有指定的物品名称
+                if (IsExitInputName)
+                {
                     // 找到搜索按钮
-					pos = new Point(SearchX, SearchY);
-					MouseMoveClick(pos, 1);  // 点击一次搜索按钮
+                    pos = new Point(SearchX, SearchY);
+                    MouseMoveClick(pos, 1);  // 点击一次搜索按钮
                     Thread.Sleep(300);
 
                     // 获取每个多少价格
                     VisionRun(1);
-					if(!(visiondata.IsSuccess[0] || visiondata.IsSuccess[1] ||
+                    if (!(visiondata.IsSuccess[0] || visiondata.IsSuccess[1] ||
                             visiondata.IsSuccess[2] || visiondata.IsSuccess[3] ||
                             visiondata.IsSuccess[4] || visiondata.IsSuccess[5] || visiondata.IsSuccess[6]))
-					{
-						IsGameExit = false;
-						IsCenterExit = false;
-						IsSearchButtonExit = false;
-						return false;
-					}
-					for (int i = 0; i < 1; i++)
-					{
-						if (visiondata.IsSuccess[0]&&visiondata.IsSuccess[1]&&
+                    {
+                        IsGameExit = false;
+                        IsCenterExit = false;
+                        IsSearchButtonExit = false;
+                        return false;
+                    }
+                    for (int i = 0; i < 1; i++)
+                    {
+                        if (visiondata.IsSuccess[0] && visiondata.IsSuccess[1] &&
                             visiondata.IsSuccess[2] && visiondata.IsSuccess[3] &&
                             visiondata.IsSuccess[4] && visiondata.IsSuccess[5] && visiondata.IsSuccess[6])
-						{
-							if (visiondata.Prices[i] <= int.Parse(txtBoxPriceLow.Text)&&visiondata.Prices[i] !=1)
-							{
+                        {
+                            if (visiondata.Prices[i] <= int.Parse(txtBoxPriceLow.Text) && visiondata.Prices[i] != 1)
+                            {
                                 File.AppendAllText("1.txt", visiondata.Prices[i].ToString() + "\r\n");
                                 //return false;
                                 //Buy
-								pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
-								MouseMoveClick(pos, 1);
-								// 输入数量
-								pos = new Point(MaxX, MaxY);
-								MouseMoveClick(pos, 1);
-								// 购买
-								pos = new Point(BuyX, BuyY);
-								MouseMoveClick(pos, 1);
-								// 确认
-								pos = new Point(CheckX, CheckY);
-								MouseMoveClick(pos, 1);
+                                pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
+                                MouseMoveClick(pos, 1);
+                                // 输入数量
+                                pos = new Point(MaxX, MaxY);
+                                MouseMoveClick(pos, 1);
+                                // 购买
+                                pos = new Point(BuyX, BuyY);
+                                MouseMoveClick(pos, 1);
+                                // 确认
+                                pos = new Point(CheckX, CheckY);
+                                MouseMoveClick(pos, 1);
                                 Thread.Sleep(400);
                                 // Yes
                                 pos = new Point(YesX, YesY);
@@ -245,61 +245,101 @@ namespace MySweep
 
                                 /* pos = new Point(100, 100);
                                  MouseMoveClick(pos, 3); // 点击+100 3次
+                                 MouseMoveClick(pos, 3); // 点击+100 3次
+                                 MouseMoveClick(pos, 3); // 点击+100 3次
                                  pos = new Point(100, 100);
                                  MouseMoveClick(pos, 3); // 点击购买*/
 
                                 // 至此购买完毕
                             }
 
-						}
-					}
-				}
-				else
-				{
-					// 找到输入框的位置
-					pos = new Point(InputX, InputY);
-					MouseMoveClick(pos, 1);
+                        }
+                    }
+                }
+                else
+                {
+                    // 找到输入框的位置
+                    pos = new Point(InputX, InputY);
+                    MouseMoveClick(pos, 1);
                     Thread.Sleep(10);
-                    dd.str("h");//物品名称
+                    // dd.str("h");//物品名称
                     Thread.Sleep(10);
-                    dd.str("d");//物品名称
+                    // dd.str("d");//物品名称
                     Thread.Sleep(10);
-					dd.str("m");//物品名称
-					Thread.Sleep(10);
-					dd.str("n");//物品名称
-					Thread.Sleep(10);
-					dd.str("j");//物品名称
-					Thread.Sleep(10);
-					dd.str("j");//物品名称
-					Thread.Sleep(10);
-					dd.str("1");//物品名称
-					Thread.Sleep(100);
-					//dd.str("玛瑙结晶");//物品名称
+                    dd.str("m");//物品名称
+                    Thread.Sleep(10);
+                    dd.str("n");//物品名称
+                    Thread.Sleep(10);
+                    dd.str("j");//物品名称
+                    Thread.Sleep(10);
+                    dd.str("j");//物品名称
+                    Thread.Sleep(10);
+                    dd.str("1");//物品名称
+                    Thread.Sleep(100);
+                    //dd.str("玛瑙结晶");//物品名称
 
-					VisionRun(0);
-				}
-			}
-			else
-			{
-				// 保证目标窗口是焦点(因为窗体已经前置  dd鼠标去点一下)
-				pos = new Point(100, 100);
-				MouseMoveClick(pos, 1);
-				// 按5下ESC(可能会到设置界面 这时候按b是否会弹出黑市界面)
-				for (int i = 0; i < 5; i++)
-				{
-					// 所有时间间隔待测试
-					DDkey(100, 500); // esc
-				}
-				Thread.Sleep(100);
-				DDkey(505, 500); // b
+                    VisionRun(0);
+                }
+            }
+            else
+            {
+                // 保证目标窗口是焦点(因为窗体已经前置  dd鼠标去点一下)
+                pos = new Point(100, 100);
+                MouseMoveClick(pos, 1);
+                // 按5下ESC(可能会到设置界面 这时候按b是否会弹出黑市界面)
+                for (int i = 0; i < 5; i++)
+                {
+                    // 所有时间间隔待测试
+                    DDkey(100, 500); // esc
+                }
+                Thread.Sleep(100);
+                DDkey(505, 500); // b
 
-				VisionRun(0);
-			}
-			return false;
-		}
+                VisionRun(0);
+            }
+            return false;
+        }
 
-		// 键盘按键
-		private void DDkey(int KeyCode, int delayTime)
+
+        private bool ProcessMode2()
+        { 
+            int allx = 250;
+            int ally = 490;
+            int getx = 400;
+            int gety = 1027;
+            int yesx = 910;
+            int yesy = 628;
+            int deletex = 497;
+            int deletey = 1027;
+
+            //全选
+            Point pos = new Point(allx, ally);
+            MouseMoveClick(pos, 1);
+            //领取
+            pos = new Point(getx, gety);
+            MouseMoveClick(pos, 1);
+            //确认
+            pos = new Point(yesx, yesy);
+            MouseMoveClick(pos, 1);
+            //全选
+            pos = new Point(allx, ally);
+            MouseMoveClick(pos, 1);
+            //删除
+            pos = new Point(deletex, deletey);
+            MouseMoveClick(pos, 1);
+            //确认
+            pos = new Point(yesx, yesy);
+            MouseMoveClick(pos, 1);
+
+            dd.str("m");//物品名称
+            Thread.Sleep(10);
+
+            IsBuy = false;
+            return false;
+        }
+
+        // 键盘按键
+        private void DDkey(int KeyCode, int delayTime)
 		{
 			dd.key(KeyCode, 1);
 			delayTime += new Random().Next(1, 100);
@@ -546,24 +586,36 @@ namespace MySweep
 			}
 		}
 
-		private void btnBegin_Click(object sender, EventArgs e)
-		{
+        private void btnBegin_Click(object sender, EventArgs e)
+        {
             MoveDelayTime = Convert.ToInt32(textBox1.Text);
             // 写入配置文件
             WriteConfig();
-			// 开启线程
-			LogShowWrite("模式1即将启动");
-			timerThread.Start();
+            // 开启线程
+            if (checkBoxMail.Checked)
+            {
+                timerEmail.Start();
+                LogShowWrite("Email模式即将启动");
+            }
+            else
+            {
+                LogShowWrite("模式1即将启动");
+                timerThread.Start();
+            }
 			timerClean.Start();
 			timerUpdate.Start();
-		}
+            checkBoxMail.Enabled = false;
+
+        }
 
 		private void btnStop_Click(object sender, EventArgs e)
 		{
 			timerThread.Stop();
 			timerClean.Stop();
 			timerUpdate.Stop();
-		}
+            timerEmail.Stop();
+            checkBoxMail.Enabled = true;
+        }
 
 		System.Diagnostics.Stopwatch stopwatch = new Stopwatch();
         object lockobj = new object();
@@ -748,7 +800,38 @@ namespace MySweep
 		VisionData visiondata = new VisionData();
 		private delegate void delegateUpdateGUI(ArrayList list);
 		private delegateUpdateGUI updatemethod;
-		private void UpdateGrid(ArrayList list)
+
+        private void timerEmail_Tick(object sender, EventArgs e)
+        {
+
+            lock (lockobj)
+            {
+                timerEmail.Enabled = false;
+                if (checkBoxShowTime.Checked) stopwatch.Start();
+                if (!ProcessMode2())
+                {
+                    LogShowWrite("遇到了未知错误");
+                }
+                else
+                {
+
+                }
+
+
+                if (checkBoxShowTime.Checked)
+                {
+                    stopwatch.Stop();
+                    TimeSpan timespan = stopwatch.Elapsed; //  获取当前实例测量得出的总时间
+                    double milliseconds = timespan.TotalMilliseconds;  //  总毫秒数
+
+                    labelMs.Text = milliseconds - time + "ms";
+                    time = milliseconds;
+                }
+                timerEmail.Enabled = true;
+            }
+        }
+
+        private void UpdateGrid(ArrayList list)
 		{
 			dataGridView1.Rows.Clear();
 			int count = 7;

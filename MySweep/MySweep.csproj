@@ -141,6 +141,8 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="bin\Debug\图像识别模块\RunBlock%28hdmnjj%29.vpp" />
+    <None Include="bin\Debug\图像识别模块\RunBlock%28mnjj%29.vpp" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

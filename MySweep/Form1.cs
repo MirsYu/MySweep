@@ -207,7 +207,7 @@ namespace MySweep
                         IsSearchButtonExit = false;
                         return false;
                     }
-                    for (int i = 0; i < 1; i++)
+                    for (int i = 0; i < 3; i++)
                     {
                         if (visiondata.IsSuccess[0] && visiondata.IsSuccess[1] &&
                             visiondata.IsSuccess[2] && visiondata.IsSuccess[3] &&
@@ -215,7 +215,7 @@ namespace MySweep
                         {
                             if (visiondata.Prices[i] <= int.Parse(txtBoxPriceLow.Text) && visiondata.Prices[i] != 1)
                             {
-                                File.AppendAllText("1.txt", visiondata.Prices[i].ToString() + "\r\n");
+                                //File.AppendAllText("1.txt", visiondata.Prices[i].ToString() + "\r\n");
                                 //return false;
                                 //Buy
                                 pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
@@ -237,7 +237,7 @@ namespace MySweep
                                 pos = new Point(FailCheckX, FailCheckY);
                                 MouseMoveClick(pos, 1);
 
-                                Thread.Sleep(1000);
+                                //Thread.Sleep(1000);
                                 // 弹出数量确认框
                                 // 分别找到 +1 +10 +100 最大 按钮
                                 // 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
@@ -254,6 +254,7 @@ namespace MySweep
                             }
 
                         }
+
                     }
                 }
                 else
@@ -262,9 +263,9 @@ namespace MySweep
                     pos = new Point(InputX, InputY);
                     MouseMoveClick(pos, 1);
                     Thread.Sleep(10);
-                    // dd.str("h");//物品名称
+                    //dd.str("h");//物品名称
                     Thread.Sleep(10);
-                    // dd.str("d");//物品名称
+                    //dd.str("d");//物品名称
                     Thread.Sleep(10);
                     dd.str("m");//物品名称
                     Thread.Sleep(10);

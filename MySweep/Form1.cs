@@ -685,8 +685,8 @@ namespace MySweep
 			}
 			txtBoxHwndName.Text = FileOperation.ReadConfig(strConfigPath, "Hwnd");
 			txtBoxHwndChildName.Text = FileOperation.ReadConfig(strConfigPath, "ChildHwnd");
-            txtBoxDelay.Text = "500";
-			txtBoxPriceLow.Text = "70";
+            txtBoxDelay.Text = FileOperation.ReadConfig(strConfigPath, "DelayTime"); 
+			txtBoxPriceLow.Text = FileOperation.ReadConfig(strConfigPath, "LowPrice");
 			txtBoxTime.Text = FileOperation.ReadConfig(strConfigPath, "ClickTime");
 			LogShowWrite("配置文件读取成功");
 		}

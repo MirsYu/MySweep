@@ -203,12 +203,7 @@
     <Content Include="GreyEyes1303.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="bin\Debug\Log\2017_10_10%409_00_13.log\" />
-    <Folder Include="bin\Debug\Log\2017_10_10%409_02_38.log\" />
-    <Folder Include="bin\Debug\Log\2017_10_10%409_04_32.log\" />
-    <Folder Include="bin\Debug\Log\2017_10_10%409_05_08.log\" />
-    <Folder Include="bin\Debug\Log\2017_10_10%409_06_08.log\" />
-    <Folder Include="bin\Debug\Log\2017_10_10%409_06_31.log\" />
+    <Folder Include="bin\Debug\Log\" />
     <Folder Include="bin\Debug\无法识别图片\" />
     <Folder Include="bin\Debug\配置文件\" />
   </ItemGroup>

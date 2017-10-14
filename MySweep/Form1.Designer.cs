@@ -278,6 +278,7 @@
 			this.btnGetPicture.TabIndex = 27;
 			this.btnGetPicture.Text = "获取截图";
 			this.btnGetPicture.UseVisualStyleBackColor = true;
+			this.btnGetPicture.Click += new System.EventHandler(this.btnGetPicture_Click);
 			// 
 			// checkBoxMail
 			// 

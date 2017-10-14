@@ -328,7 +328,10 @@ namespace MySweep
 
 		private string TimeToFile()
 		{
-			string time = DateTime.Now.ToString("yyyyMMdd");
+			string time = DateTime.Now.ToString();
+			time = time.Replace("/", "_");
+			time = time.Replace(':', '_');
+			time = time.Replace(' ', '@');
 			return time;
 		}
 

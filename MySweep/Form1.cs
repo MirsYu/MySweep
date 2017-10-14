@@ -140,6 +140,7 @@ namespace MySweep
 			catch
             {
                 timerUpdate.Stop();
+				timerThread.Stop();
             }
             DateTime dtEnd = DateTime.Now;
             TimeSpan diffTime = dtEnd - dtStart;

@@ -63,7 +63,7 @@ namespace MySweep
 			{
 				DLLInclude.ShowWindow(hwnd, 1);
 				DLLInclude.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 1 | 2);
-				DLLInclude.MoveWindow(hwnd, 0, 0, 800, 600, true);
+				DLLInclude.MoveWindow(hwnd, 0, 0, 1600, 900, true);
 			}
 			return true;
 		}

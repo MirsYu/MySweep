@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Resources;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -29,8 +31,6 @@ namespace MySweep
 	{
 		// 鼠标
 		private CDD dd;
-		// 视觉模块
-		private CogToolBlock block;
 		// 识别失败图片保存路径
 		string strFailCheck;
 		// 图像识别模块路径
@@ -43,8 +43,6 @@ namespace MySweep
 		public static IntPtr MainHwnd;
 		// 启动的程序PID
 		int pid;
-		// 时间记录
-		double time = 0;
 
 
 		public Form1()
@@ -75,7 +73,6 @@ namespace MySweep
 				WriteConfig();
 			else
 				ReadConfig();
-
 			// 加载视觉模块
 			Vision.loadvpp(strVisPath);
 			cogToolBlockEditV21.Subject = Vision.block;
@@ -87,39 +84,22 @@ namespace MySweep
 			string dllfile = "DDHID64.dll";
 			LoadDllFile(dllfile);
 			updatemethod = new delegateUpdateGUI(UpdateGrid);
-
-		}
-
-		private void LogShowWrite(string log)
-		{
-			if (checkBoxLog.Checked)
-			{
-				// log信息处理
-				string Temp = "[" + DateTime.Now + "]" + ":" + log;
-				// 先写入box
-				txtBoxLog.Text += Temp + "\r\n";
-				txtBoxLog.Focus();//获取焦点
-				txtBoxLog.Select(txtBoxLog.TextLength, 0);//光标定位到文本最后
-				txtBoxLog.ScrollToCaret();//滚动到光标处
-				if (!FileOperation.WriteLine(strLogPath, Temp))
-				{
-					MessageBox.Show(Temp + "\r\n" + "写入Log文件失败");
-				}
-			}
+			ResourceManager rm = new ResourceManager("MySweep.Properties.Resources", Assembly.GetExecutingAssembly());
+			this.Icon = (Icon)(rm.GetObject("GreyEyes1303"));
 		}
 
         Bitmap image1, image2;
 		private void VisionRun(int index)
 		{
 			//Run
-
 			try
 			{
 				ArrayList data = new ArrayList();
                 image2 = ProgramOperation.ALT(MainHwnd);
                 if (image2 != null && image2 != image1)
-                { LogShowWrite("截图成功"); image1 = image2; }
-                else { LogShowWrite("截图失败"); return; }
+					image1 = image2; 
+                else
+					return;
 				Vision.Run(image1, index, out data);
 				if (index == 1)
 				{
@@ -154,8 +134,6 @@ namespace MySweep
 			}
 			catch
             {
-                timerThread.Stop();
-                timerClean.Stop();
                 timerUpdate.Stop();
             }
 		}
@@ -379,7 +357,6 @@ namespace MySweep
 				dd.btn(2);
 				Thread.Sleep(MoveDelayTime);
 			}
-			LogShowWrite("(" + pos.X + "," + pos.Y + ")" + "点击了" + time + "下");
 		}
 
 		#region "热键设置相关代码"
@@ -436,6 +413,10 @@ namespace MySweep
 		{
 			Random rad = new Random();
 			this.Text = FileOperation.ReadConfig(strConfigPath, "Head" + (int)rad.Next(0, 22));
+			Rectangle rect = new Rectangle();
+			rect = Screen.GetWorkingArea(this);
+			this.Left = rect.Width-this.Width;
+			this.Top = 0;
 		}
 
 		private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -446,16 +427,16 @@ namespace MySweep
 					this.Size = new Size(569, 323);
 					break;
 				case 1:
-					this.Size = new Size(569, 323);
+					this.Size = new Size(985, 478);
 					break;
 				case 2:
-					this.Size = new Size(758, 512);
-					tabControl.Size = new Size(742, 473);
-					tabPageRead.Size = new Size(734, 447);
+					this.Size = new Size(569, 323);
+					dataGridView1.Focus();
 					break;
 				default:
 					break;
 			}
+			this.Refresh();
 		}
 
 		private void Form1_Resize(object sender, EventArgs e)
@@ -474,11 +455,9 @@ namespace MySweep
 			if (txtBoxPath.Text.IndexOf(flag) != -1)
 			{
 				btnChoosePath.Enabled = false;
-				LogShowWrite("选择文件路径成功");
 			}
 			else
 			{
-				LogShowWrite("选择文件路径失败");
 			}
 		}
 
@@ -487,47 +466,29 @@ namespace MySweep
 			if (txtBoxPath.Text == "")
 			{
 				btnChoosePath.Enabled = true;
-				LogShowWrite("程序路径是空的");
 				return;
 			}
 			pid = ProgramOperation.StartProgram(txtBoxPath.Text);
 			if (pid != 0)
 			{
 				btnStartGame.Enabled = false;
-				LogShowWrite("程序启动成功");
 			}
 			else
 			{
 				btnChoosePath.Enabled = true;
-				LogShowWrite("程序启动失败");
 			}
 		}
 
 		private void btnCheckHwnd_Click(object sender, EventArgs e)
 		{
-			MainHwnd = ProgramOperation.GetWnd(pid, txtBoxHwndName.Text);
-			if (MainHwnd != IntPtr.Zero)
-			{
-				MainHwnd = DLLInclude.FindWindowEx(MainHwnd, IntPtr.Zero, null, txtBoxHwndChildName.Text);
-				if (MainHwnd != IntPtr.Zero)
-				{
-					txtBoxHwnd.Text = MainHwnd.ToString();
-					btnCheckHwnd.Enabled = false;
-					LogShowWrite("句柄查找成功");
-					return;
-				}
-			}
-
 			if (ProgramOperation.CheckHwnd("冒险岛2 - 尬萌不限号", "", ref MainHwnd))
 			{
 				txtBoxHwnd.Text = MainHwnd.ToString();
 				btnCheckHwnd.Enabled = false;
-				LogShowWrite("句柄查找成功");
 			}
 			else
 			{
 				btnStartGame.Enabled = true;
-				LogShowWrite("句柄查找失败");
 			}
 		}
 
@@ -536,18 +497,15 @@ namespace MySweep
 			if (MainHwnd == IntPtr.Zero)
 			{
 				btnCheckHwnd.Enabled = true;
-				LogShowWrite("句柄未找到");
 				return;
 			}
 			if (ProgramOperation.ForwardWindow(MainHwnd))
 			{
 				btnHwndForward.Enabled = false;
-				LogShowWrite("窗体前置成功");
 			}
 			else
 			{
 				btnCheckHwnd.Enabled = true;
-				LogShowWrite("窗体前置失败");
 			}
 		}
 
@@ -564,7 +522,6 @@ namespace MySweep
 				catch
 				{
 					e.KeyChar = (char)0;   //处理非法字符
-					LogShowWrite("请输入数字");
 				}
 			}
 		}
@@ -582,7 +539,6 @@ namespace MySweep
 				catch
 				{
 					e.KeyChar = (char)0;   //处理非法字符
-					LogShowWrite("请输入数字");
 				}
 			}
 		}
@@ -596,14 +552,11 @@ namespace MySweep
             if (checkBoxMail.Checked)
             {
                 timerEmail.Start();
-                LogShowWrite("Email模式即将启动");
             }
             else
             {
-                LogShowWrite("模式1即将启动");
-                timerThread.Start();
+
             }
-			timerClean.Start();
 			timerUpdate.Start();
             checkBoxMail.Enabled = false;
 
@@ -611,51 +564,17 @@ namespace MySweep
 
 		private void btnStop_Click(object sender, EventArgs e)
 		{
-			timerThread.Stop();
-			timerClean.Stop();
+
 			timerUpdate.Stop();
             timerEmail.Stop();
             checkBoxMail.Enabled = true;
         }
 
-		System.Diagnostics.Stopwatch stopwatch = new Stopwatch();
         object lockobj = new object();
-		private void timerThread_Tick(object sender, EventArgs e)
-		{
-            lock (lockobj)
-            {
-                timerThread.Enabled = false;
-                if (checkBoxShowTime.Checked) stopwatch.Start();
-                if (!ProcessMode1())
-                {
-                    LogShowWrite("遇到了未知错误");
-                }
-                else
-                {
-
-                }
-
-
-                if (checkBoxShowTime.Checked)
-                {
-                    stopwatch.Stop();
-                    TimeSpan timespan = stopwatch.Elapsed; //  获取当前实例测量得出的总时间
-                    double milliseconds = timespan.TotalMilliseconds;  //  总毫秒数
-
-                    labelMs.Text = milliseconds - time + "ms";
-                    time = milliseconds;
-                }
-                timerThread.Enabled = true;
-            }
-		}
-
-		private void timerClean_Tick(object sender, EventArgs e)
-		{
-			txtBoxLog.Text = "";
-		}
 
 		private void timerUpdate_Tick(object sender, EventArgs e)
 		{
+
 			strLogPath = AppDomain.CurrentDomain.BaseDirectory + "Log" + "\\" + TimeToFile() + ".txt";
 		}
 
@@ -663,14 +582,10 @@ namespace MySweep
 		{
 			string write = "";
 			write += "[Path]=" + txtBoxPath.Text + "\r\n";
-			write += "[Mode]=" + (radioBtnSweep.Checked ? "Sweep" : "Low") + "\r\n";
-			write += "[Hwnd]=" + txtBoxHwndName.Text + "\r\n";
-			write += "[ChildHwnd]=" + txtBoxHwndChildName.Text + "\r\n";
+			write += "[Mode]=" + "Low" + "\r\n";
 			write += "[DelayTime]=" + txtBoxDelay.Text + "\r\n";
 			write += "[ClickTime]=" + txtBoxTime.Text + "\r\n";
 			write += "[LowPrice]=" + txtBoxPriceLow.Text + "\r\n";
-			write += "[Log]=" + checkBoxLog.Checked + "\r\n";
-			write += "[ShowTime]=" + checkBoxShowTime.Checked + "\r\n";
 			write += "[Head0]=" + "韭菜馅的脑子勾过芡的心" + "\r\n";
 			write += "[Head1]=" + "最假的是眼泪，最真的看不见" + "\r\n";
 			write += "[Head2]=" + "我期待，辉煌灿烂后黑暗的深邃，我渴望，喧哗飞扬后宁静的永恒，就像烈焰散尽的灰烟，自由自在，四处飘荡" + "\r\n";
@@ -704,7 +619,6 @@ namespace MySweep
 			write += "[Head30]=" + "I would rather share one lifetime with you than face all the ages of this world alone ." + "\r\n";
 
 			FileOperation.WriteAll(strConfigPath, write);
-			LogShowWrite("配置文件写入成功");
 		}
 
 		private void ReadConfig()
@@ -712,44 +626,24 @@ namespace MySweep
 			txtBoxPath.Text = FileOperation.ReadConfig(strConfigPath, "Path");
 			if (FileOperation.ReadConfig(strConfigPath, "Mode") == "Sweep")
 			{
-				radioBtnSweep.Checked = true;
 				radioBtnLow.Checked = false;
 			}
 			else
 			{
-				radioBtnSweep.Checked = false;
 				radioBtnLow.Checked = true;
 			}
-			if (FileOperation.ReadConfig(strConfigPath, "Log") == "True")
-			{
-				checkBoxLog.Checked = true;
-			}
-			else
-			{
-				checkBoxLog.Checked = false;
-			}
-			if (FileOperation.ReadConfig(strConfigPath, "ShowTime") == "True")
-			{
-				checkBoxShowTime.Checked = true;
-			}
-			else
-			{
-				checkBoxShowTime.Checked = false;
-			}
-			txtBoxHwndName.Text = FileOperation.ReadConfig(strConfigPath, "Hwnd");
-			txtBoxHwndChildName.Text = FileOperation.ReadConfig(strConfigPath, "ChildHwnd");
             txtBoxDelay.Text = FileOperation.ReadConfig(strConfigPath, "DelayTime"); 
 			txtBoxPriceLow.Text = FileOperation.ReadConfig(strConfigPath, "LowPrice");
 			txtBoxTime.Text = FileOperation.ReadConfig(strConfigPath, "ClickTime");
-			LogShowWrite("配置文件读取成功");
+
 		}
 
 		private void btnGetPicture_Click(object sender, EventArgs e)
 		{
 			Bitmap image;
 			image = ProgramOperation.ALT(MainHwnd);
-			if (image != null) LogShowWrite("截图成功");
-			else { LogShowWrite("截图失败"); return; }
+			if (image == null)
+				return;
 			image.Save(strFailCheck + TimeToFile() + ".png");
 		}
 
@@ -771,7 +665,6 @@ namespace MySweep
 				catch
 				{
 					e.KeyChar = (char)0;   //处理非法字符
-					LogShowWrite("请输入数字");
 				}
 			}
 		}
@@ -785,8 +678,8 @@ namespace MySweep
 				ArrayList data = new ArrayList();
 				Bitmap image;
 				image = ProgramOperation.ALT(MainHwnd);
-				if (image != null) LogShowWrite("截图成功");
-				else { LogShowWrite("截图失败"); return; }
+				if (image == null)
+					return;
 				Vision.Run(image, 0, out data, out outimage, out record);
 				cogRecordDisplay1.Image = outimage;
 				cogRecordDisplay1.Record = record;
@@ -808,31 +701,17 @@ namespace MySweep
             lock (lockobj)
             {
                 timerEmail.Enabled = false;
-                if (checkBoxShowTime.Checked) stopwatch.Start();
-                if (!ProcessMode2())
-                {
-                    LogShowWrite("遇到了未知错误");
-                }
-                else
-                {
-
-                }
-
-
-                if (checkBoxShowTime.Checked)
-                {
-                    stopwatch.Stop();
-                    TimeSpan timespan = stopwatch.Elapsed; //  获取当前实例测量得出的总时间
-                    double milliseconds = timespan.TotalMilliseconds;  //  总毫秒数
-
-                    labelMs.Text = milliseconds - time + "ms";
-                    time = milliseconds;
-                }
+				ProcessMode2();
                 timerEmail.Enabled = true;
             }
         }
 
-        private void UpdateGrid(ArrayList list)
+		private void timerClean_Tick(object sender, EventArgs e)
+		{
+
+		}
+
+		private void UpdateGrid(ArrayList list)
 		{
 			dataGridView1.Rows.Clear();
 			int count = 7;
@@ -900,8 +779,8 @@ namespace MySweep
 					ArrayList data = new ArrayList();
 					Bitmap image;
 					image = ProgramOperation.ALT(MainHwnd);
-					if (image != null) LogShowWrite("截图成功");
-					else { LogShowWrite("截图失败"); return; }
+					if (image == null)
+						return;
 					Vision.Run(image, 1, out data, out outimage, out record);
 					cogRecordDisplay1.Image = outimage;
 					cogRecordDisplay1.Record = record;
@@ -924,8 +803,8 @@ namespace MySweep
 				ArrayList data = new ArrayList();
 				Bitmap image;
 				image = ProgramOperation.ALT(MainHwnd);
-				if (image != null) LogShowWrite("截图成功");
-				else { LogShowWrite("截图失败"); return; }
+				if (image != null)
+					return; 
 				Vision.Run(image, 0, out data, out outimage, out record);
 				cogRecordDisplay1.Image = outimage;
 				cogRecordDisplay1.Record = record;
@@ -946,8 +825,8 @@ namespace MySweep
 				ArrayList data = new ArrayList();
 				Bitmap image;
 				image = ProgramOperation.ALT(MainHwnd);
-				if (image != null) LogShowWrite("截图成功");
-				else { LogShowWrite("截图失败"); return; }
+				if (image != null)
+					return; 
 				Vision.Run(image, 1, out data, out outimage, out record);
 				cogRecordDisplay1.Image = outimage;
 				cogRecordDisplay1.Record = record;

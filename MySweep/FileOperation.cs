@@ -46,7 +46,7 @@ namespace MySweep
 				steamWriter.Flush();
 				steamWriter.Close();
 			}
-			catch (IOException ex)
+			catch (IOException)
 			{
 				return true;
 			}

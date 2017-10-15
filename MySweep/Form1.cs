@@ -88,259 +88,272 @@ namespace MySweep
 			this.Icon = (Icon)(rm.GetObject("GreyEyes1303"));
 		}
 
-        Bitmap image1, image2;
+		Bitmap image1, image2;
 		private void VisionRun(int index)
 		{
-            DateTime dtStart = DateTime.Now;
+			DateTime dtStart = DateTime.Now;
 			//Run
 			try
 			{
 				ArrayList data = new ArrayList();
-                image2 = ProgramOperation.ALT(MainHwnd);
-                if (image2 != null && image2 != image1)
-					image1 = image2; 
-                else
+				image2 = ProgramOperation.ALT(MainHwnd);
+				if (image2 != null && image2 != image1)
+					image1 = image2;
+				else
 					return;
 				Vision.Run(image1, index, out data);
-                switch (index)
-                {
-                    case 0:
-                        IsGameExit = (bool)Vision.block.Outputs["GameExit"].Value;
-                        IsCenterExit = (bool)Vision.block.Outputs["CenterExit"].Value;
-                        IsSearchButtonExit = (bool)Vision.block.Outputs["SearchButtonExit"].Value;
-                        //IsExitInputName = (bool)Vision.block.Outputs["IsExitInputName"].Value;
-                        SearchX = Convert.ToInt32(Vision.block.Outputs["SearchX"].Value);
-                        SearchY = Convert.ToInt32(Vision.block.Outputs["SearchY"].Value);
-                        InputX = Convert.ToInt32(Vision.block.Outputs["InputX"].Value);
-                        InputY = Convert.ToInt32(Vision.block.Outputs["InputY"].Value);
-                        BuyX = Convert.ToInt32(Vision.block.Outputs["BuyX"].Value);
-                        BuyY = Convert.ToInt32(Vision.block.Outputs["BuyY"].Value);
-                        InputCountX = Convert.ToInt32(Vision.block.Outputs["InputCountX"].Value);
-                        InputCountY = Convert.ToInt32(Vision.block.Outputs["InputCountY"].Value);
-                        CheckX = Convert.ToInt32(Vision.block.Outputs["CheckX"].Value);
-                        CheckY = Convert.ToInt32(Vision.block.Outputs["CheckY"].Value);
-                        YesX = Convert.ToInt32(Vision.block.Outputs["YesX"].Value);
-                        YesY = Convert.ToInt32(Vision.block.Outputs["YesY"].Value);
-                        MaxX = Convert.ToInt32(Vision.block.Outputs["MaxX"].Value);
-                        MaxY = Convert.ToInt32(Vision.block.Outputs["MaxY"].Value);
-                        FailCheckX = Convert.ToInt32(Vision.block.Outputs["FailCheckX"].Value);
-                        FailCheckY = Convert.ToInt32(Vision.block.Outputs["FailCheckY"].Value);
-                        break;
-                    case 1:
-                        Parsedata(data);
-                        break;
-                    case 2:
-                        IsSearchOK = (bool)Vision.block.Outputs["IsSearchOK"].Value;
-                        break;
-                }
+				switch (index)
+				{
+					case 0:
+						IsGameExit = (bool)Vision.block.Outputs["GameExit"].Value;
+						IsCenterExit = (bool)Vision.block.Outputs["CenterExit"].Value;
+						IsSearchButtonExit = (bool)Vision.block.Outputs["SearchButtonExit"].Value;
+						//IsExitInputName = (bool)Vision.block.Outputs["IsExitInputName"].Value;
+						SearchX = Convert.ToInt32(Vision.block.Outputs["SearchX"].Value);
+						SearchY = Convert.ToInt32(Vision.block.Outputs["SearchY"].Value);
+						InputX = Convert.ToInt32(Vision.block.Outputs["InputX"].Value);
+						InputY = Convert.ToInt32(Vision.block.Outputs["InputY"].Value);
+						BuyX = Convert.ToInt32(Vision.block.Outputs["BuyX"].Value);
+						BuyY = Convert.ToInt32(Vision.block.Outputs["BuyY"].Value);
+						InputCountX = Convert.ToInt32(Vision.block.Outputs["InputCountX"].Value);
+						InputCountY = Convert.ToInt32(Vision.block.Outputs["InputCountY"].Value);
+						CheckX = Convert.ToInt32(Vision.block.Outputs["CheckX"].Value);
+						CheckY = Convert.ToInt32(Vision.block.Outputs["CheckY"].Value);
+						YesX = Convert.ToInt32(Vision.block.Outputs["YesX"].Value);
+						YesY = Convert.ToInt32(Vision.block.Outputs["YesY"].Value);
+						MaxX = Convert.ToInt32(Vision.block.Outputs["MaxX"].Value);
+						MaxY = Convert.ToInt32(Vision.block.Outputs["MaxY"].Value);
+						FailCheckX = Convert.ToInt32(Vision.block.Outputs["FailCheckX"].Value);
+						FailCheckY = Convert.ToInt32(Vision.block.Outputs["FailCheckY"].Value);
+
+						break;
+					case 1:
+						Parsedata(data);
+						break;
+					case 2:
+						IsSearchOK = (bool)Vision.block.Outputs["IsSearchOK"].Value;
+						break;
+					case 3:
+						IsBuyWindowShow = (bool)Vision.block.Outputs["IsBuyWindowShow"].Value;
+						break;
+				}
 				//cogRecordDisplay1.Image = outimage;
 				//cogRecordDisplay1.Record = record;
 				//UpdateGrid(data);
 			}
 			catch
-            {
-                timerUpdate.Stop();
+			{
+				timerUpdate.Stop();
 				timerThread.Stop();
-            }
-            DateTime dtEnd = DateTime.Now;
-            TimeSpan diffTime = dtEnd - dtStart;
-            CTinMm = diffTime.Milliseconds;
+			}
+			DateTime dtEnd = DateTime.Now;
+			TimeSpan diffTime = dtEnd - dtStart;
+			CTinMm = diffTime.Milliseconds;
 
 
-        }
+		}
 
 		bool IsGameExit = false;
 		bool IsCenterExit = false;
 		bool IsSearchButtonExit = false;
 		bool IsExitInputName = false;
-        bool IsBuy = false;
+		bool IsBuy = false;
 		int SearchX, SearchY;
 		int InputX, InputY;
 		int BuyX, BuyY;
 		int InputCountX, InputCountY;
 		int CheckX, CheckY;
 		int YesX, YesY;
-        int MaxX, MaxY;
-        int FailCheckX, FailCheckY;
-        int MoveDelayTime = 100;
-        int CTinMm = 0;
-        bool IsSearchOK = false;
-
-        private bool ProcessMode1()
-        {
-            IsBuy = false;
-            Point pos = new Point();
-            // 视觉模块
-            // 获取是否在黑市界面
-            if (!(IsGameExit && IsCenterExit && IsSearchButtonExit))
-            {
-                VisionRun(0);
-                //return false;
-            }
-            if (IsCenterExit && IsSearchButtonExit)
-            {
-                // 首先判断输入框里有没有指定的物品名称
-                if (IsExitInputName)
-                {
-                    // 找到搜索按钮
-                    IsSearchOK = false;
-                    int searchLimit = 100;
-                    int searchDelayTime = 10;
-                    int searchTime = 0;
-                    pos = new Point(SearchX, SearchY);
-                    MouseMoveClick(pos, 1);  // 点击一次搜索按钮
-                    while (!IsSearchOK && searchTime < searchLimit)
-                    {
-                        VisionRun(2);
-                        //Thread.Sleep(searchDelayTime);
-                        searchTime++;
-                    }
-                    if (searchTime == searchLimit)
-                    {
-                        IsExitInputName = false;
-                        DDkey(100, 500); // esc
-                        IsSearchButtonExit = false;
-                        return false;
-                    }
-
-                    // 获取每个多少价格
-                    VisionRun(1);
-                    if (!(visiondata.IsSuccess[0] || visiondata.IsSuccess[1] ||
-                            visiondata.IsSuccess[2] || visiondata.IsSuccess[3] ||
-                            visiondata.IsSuccess[4] || visiondata.IsSuccess[5] || visiondata.IsSuccess[6]))
-                    {
-                        IsGameExit = false;
-                        IsCenterExit = false;
-                        IsSearchButtonExit = false;
-                        return false;
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        if (visiondata.IsSuccess[0] && visiondata.IsSuccess[1] &&
-                            visiondata.IsSuccess[2] && visiondata.IsSuccess[3] &&
-                            visiondata.IsSuccess[4] && visiondata.IsSuccess[5] && visiondata.IsSuccess[6])
-                        {
-                            if (visiondata.Prices[i] <= int.Parse(txtBoxPriceLow.Text) && visiondata.Prices[i] != 1 && visiondata.Counts[i] != 0)
-                            {
-                                //File.AppendAllText("1.txt", visiondata.Prices[i].ToString() + "\r\n");
-                                //return false;
-                                //Buy
-                                pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
-                                MouseMoveClick(pos, 1);
-                                // 输入数量
-                                pos = new Point(MaxX, MaxY);
-                                MouseMoveClick(pos, 1);
-                                // 购买
-                                pos = new Point(BuyX, BuyY);
-                                MouseMoveClick(pos, 1);
-                                // 确认
-
-                                DDkey(313, 200); // enter
-                                                 // pos = new Point(CheckX, CheckY);
-                                                 //MouseMoveClick(pos, 1);
-                                                 //Thread.Sleep(400);
-                                                 // Yes
-
-                                DDkey(313, 200); // enter
-                                                 //pos = new Point(YesX, YesY);
-                                                 //MouseMoveClick(pos, 1);
-                                                 // FailCheck
-
-                                                 //pos = new Point(FailCheckX, FailCheckY);
-                                                 //MouseMoveClick(pos, 1);
-
-                                //Thread.Sleep(1000);
-                                // 弹出数量确认框
-                                // 分别找到 +1 +10 +100 最大 按钮
-                                // 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
-                                // 比如是+100按钮
-
-                                /* pos = new Point(100, 100);
-                                 MouseMoveClick(pos, 3); // 点击+100 3次
-                                 MouseMoveClick(pos, 3); // 点击+100 3次
-                                 MouseMoveClick(pos, 3); // 点击+100 3次
-                                 pos = new Point(100, 100);
-                                 MouseMoveClick(pos, 3); // 点击购买*/
-
-                                // 至此购买完毕
-                            }
-
-                        }
-
-                    }
-                }
-                else
-                {
-                    // 找到输入框的位置
-                    pos = new Point(InputX, InputY);
-                    MouseMoveClick(pos, 1);
-                    Thread.Sleep(10);
-                    char[] charName = txtBox_Name.Text.ToCharArray();
-                    for (int i = 0; i < charName.Length; i++)
-                    {
-                        Thread.Sleep(500);
-                        dd.str(charName[i].ToString());
-                        IsExitInputName = true;
-                    }
-                    VisionRun(0);
-                }
-            }
-            else
-            {
-                // 保证目标窗口是焦点(因为窗体已经前置  dd鼠标去点一下)
-                pos = new Point(100, 100);
-                MouseMoveClick(pos, 1);
-                // 所有时间间隔待测试
-                DDkey(100, 500); // esc
-
-                Thread.Sleep(100);
-                DDkey(505, 500); // b
-
-                VisionRun(0);
-            }
-            return false;
-        }
+		int MaxX, MaxY;
+		int FailCheckX, FailCheckY;
+		int MoveDelayTime = 100;
+		int CTinMm = 0;
+		bool IsSearchOK = false;
+		bool IsBuyWindowShow = false;
 
 
-        private bool ProcessMode2()
-        { 
-            int allx = 250;
-            int ally = 490;
-            int getx = 400;
-            int gety = 1027;
-            int yesx = 910;
-            int yesy = 628;
-            int deletex = 497;
-            int deletey = 1027;
+		private bool ProcessMode1()
+		{
+			IsBuy = false;
+			Point pos = new Point();
+			// 视觉模块
+			// 获取是否在黑市界面
+			if (!(IsGameExit && IsCenterExit && IsSearchButtonExit))
+			{
+				VisionRun(0);
+				//return false;
+			}
+			if (IsCenterExit && IsSearchButtonExit)
+			{
+				// 首先判断输入框里有没有指定的物品名称
+				if (IsExitInputName)
+				{
+					// 找到搜索按钮
+					IsSearchOK = false;
+					int searchLimit = 100;
+					int searchDelayTime = 10;
+					int searchTime = 0;
+					//pos = new Point(SearchX, SearchY);
+					//MouseMoveClick(pos, 1);  // 点击一次搜索按钮
+					DDkey(313, 200);
+					while (!IsSearchOK && searchTime < searchLimit)
+					{
+						VisionRun(2);
+						Thread.Sleep(searchDelayTime);
+						searchTime++;
+					}
+					//if (searchTime >= searchLimit)
+					//{
+					//	IsExitInputName = false;
+					//	DDkey(100, 500); // esc
+					//	IsSearchButtonExit = false;
+					//	return false;
+					//}
 
-            //全选
-            Point pos = new Point(allx, ally);
-            MouseMoveClick(pos, 1);
-            //领取
-            pos = new Point(getx, gety);
-            MouseMoveClick(pos, 1);
-            //确认
-            pos = new Point(yesx, yesy);
-            MouseMoveClick(pos, 1);
-            //全选
-            pos = new Point(allx, ally);
-            MouseMoveClick(pos, 1);
-            //删除
-            pos = new Point(deletex, deletey);
-            MouseMoveClick(pos, 1);
-            //确认
-            pos = new Point(yesx, yesy);
-            MouseMoveClick(pos, 1);
+					// 获取每个多少价格
+					VisionRun(1);
+					if (!(visiondata.IsSuccess[0] || visiondata.IsSuccess[1] ||
+							visiondata.IsSuccess[2] || visiondata.IsSuccess[3] ||
+							visiondata.IsSuccess[4] || visiondata.IsSuccess[5] || visiondata.IsSuccess[6]))
+					{
+						IsGameExit = false;
+						IsCenterExit = false;
+						IsSearchButtonExit = false;
+						return false;
+					}
+					for (int i = 0; i < 3; i++)
+					{
+						if (visiondata.IsSuccess[0] && visiondata.IsSuccess[1] &&
+							visiondata.IsSuccess[2] && visiondata.IsSuccess[3] &&
+							visiondata.IsSuccess[4] && visiondata.IsSuccess[5] && visiondata.IsSuccess[6])
+						{
+							if (visiondata.Prices[i] <= int.Parse(txtBoxPriceLow.Text) && visiondata.Prices[i] != 1 && visiondata.Counts[i] != 0)
+							{
+								//File.AppendAllText("1.txt", visiondata.Prices[i].ToString() + "\r\n");
+								//return false;
+								//Buy
+								pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
+								MouseMoveClick(pos, 1);
+								VisionRun(3);
+								if (IsBuyWindowShow)
+								{
 
-            dd.str("m");//物品名称
-            Thread.Sleep(10);
 
-            IsBuy = false;
-            return false;
-        }
+									// 输入数量
+									pos = new Point(MaxX, MaxY);
+									MouseMoveClick(pos, 1);
+									// 购买
+									pos = new Point(BuyX, BuyY);
+									MouseMoveClick(pos, 1);
+									// 确认
 
-        // 键盘按键
-        private void DDkey(int KeyCode, int delayTime)
+									DDkey(313, 200); // enter
+													 // pos = new Point(CheckX, CheckY);
+													 //MouseMoveClick(pos, 1);
+													 //Thread.Sleep(400);
+													 // Yes
+
+									DDkey(313, 200); // enter
+													 //pos = new Point(YesX, YesY);
+													 //MouseMoveClick(pos, 1);
+													 // FailCheck
+
+									//pos = new Point(FailCheckX, FailCheckY);
+									//MouseMoveClick(pos, 1);
+
+									//Thread.Sleep(1000);
+									// 弹出数量确认框
+									// 分别找到 +1 +10 +100 最大 按钮
+									// 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
+									// 比如是+100按钮
+
+									/* pos = new Point(100, 100);
+									 MouseMoveClick(pos, 3); // 点击+100 3次
+									 MouseMoveClick(pos, 3); // 点击+100 3次
+									 MouseMoveClick(pos, 3); // 点击+100 3次
+									 pos = new Point(100, 100);
+									 MouseMoveClick(pos, 3); // 点击购买*/
+
+									// 至此购买完毕
+								}
+							}
+
+						}
+
+					}
+				}
+				else
+				{
+					// 找到输入框的位置
+					pos = new Point(InputX, InputY);
+					MouseMoveClick(pos, 1);
+					Thread.Sleep(10);
+					char[] charName = txtBox_Name.Text.ToCharArray();
+					for (int i = 0; i < charName.Length; i++)
+					{
+						Thread.Sleep(500);
+						dd.str(charName[i].ToString());
+					}
+					VisionRun(0);
+					IsExitInputName = true;
+				}
+			}
+			else
+			{
+				// 保证目标窗口是焦点(因为窗体已经前置  dd鼠标去点一下)
+				pos = new Point(100, 100);
+				MouseMoveClick(pos, 1);
+				// 所有时间间隔待测试
+				DDkey(100, 500); // esc
+
+				Thread.Sleep(100);
+				DDkey(505, 500); // b
+
+				VisionRun(0);
+			}
+			return false;
+		}
+
+
+		private bool ProcessMode2()
+		{
+			int allx = 250;
+			int ally = 490;
+			int getx = 400;
+			int gety = 1027;
+			int yesx = 910;
+			int yesy = 628;
+			int deletex = 497;
+			int deletey = 1027;
+
+			//全选
+			Point pos = new Point(allx, ally);
+			MouseMoveClick(pos, 1);
+			//领取
+			pos = new Point(getx, gety);
+			MouseMoveClick(pos, 1);
+			//确认
+			pos = new Point(yesx, yesy);
+			MouseMoveClick(pos, 1);
+			//全选
+			pos = new Point(allx, ally);
+			MouseMoveClick(pos, 1);
+			//删除
+			pos = new Point(deletex, deletey);
+			MouseMoveClick(pos, 1);
+			//确认
+			pos = new Point(yesx, yesy);
+			MouseMoveClick(pos, 1);
+
+			dd.str("m");//物品名称
+			Thread.Sleep(10);
+
+			IsBuy = false;
+			return false;
+		}
+
+		// 键盘按键
+		private void DDkey(int KeyCode, int delayTime)
 		{
 			dd.key(KeyCode, 1);
 			delayTime += new Random().Next(1, 100);
@@ -440,7 +453,7 @@ namespace MySweep
 			this.Text = FileOperation.ReadConfig(strConfigPath, "Head" + (int)rad.Next(0, 22));
 			Rectangle rect = new Rectangle();
 			rect = Screen.GetWorkingArea(this);
-			this.Left = rect.Width-this.Width;
+			this.Left = rect.Width - this.Width;
 			this.Top = 0;
 		}
 
@@ -568,35 +581,35 @@ namespace MySweep
 			}
 		}
 
-        private void btnBegin_Click(object sender, EventArgs e)
-        {
-            MoveDelayTime = Convert.ToInt32(textBox1.Text);
-            timerThread.Interval = Convert.ToInt32(txtBoxDelay.Text);
-            // 写入配置文件
-            WriteConfig();
-            // 开启线程
-            if (checkBoxMail.Checked)
-            {
-                timerEmail.Start();
-            }
-            else
-            {
-                timerThread.Start();
-            }
+		private void btnBegin_Click(object sender, EventArgs e)
+		{
+			MoveDelayTime = Convert.ToInt32(textBox1.Text);
+			timerThread.Interval = Convert.ToInt32(txtBoxDelay.Text);
+			// 写入配置文件
+			WriteConfig();
+			// 开启线程
+			if (checkBoxMail.Checked)
+			{
+				timerEmail.Start();
+			}
+			else
+			{
+				timerThread.Start();
+			}
 			timerUpdate.Start();
-            checkBoxMail.Enabled = false;
+			checkBoxMail.Enabled = false;
 
-        }
+		}
 
 		private void btnStop_Click(object sender, EventArgs e)
 		{
-            timerThread.Stop();
+			timerThread.Stop();
 			timerUpdate.Stop();
-            timerEmail.Stop();
-            checkBoxMail.Enabled = true;
-        }
+			timerEmail.Stop();
+			checkBoxMail.Enabled = true;
+		}
 
-        object lockobj = new object();
+		object lockobj = new object();
 
 		private void timerUpdate_Tick(object sender, EventArgs e)
 		{
@@ -658,7 +671,7 @@ namespace MySweep
 			{
 				radioBtnLow.Checked = true;
 			}
-            txtBoxDelay.Text = FileOperation.ReadConfig(strConfigPath, "DelayTime"); 
+			txtBoxDelay.Text = FileOperation.ReadConfig(strConfigPath, "DelayTime");
 			txtBoxPriceLow.Text = FileOperation.ReadConfig(strConfigPath, "LowPrice");
 			txtBoxTime.Text = FileOperation.ReadConfig(strConfigPath, "ClickTime");
 
@@ -721,30 +734,30 @@ namespace MySweep
 		private delegate void delegateUpdateGUI(ArrayList list);
 		private delegateUpdateGUI updatemethod;
 
-        private void timerEmail_Tick(object sender, EventArgs e)
-        {
+		private void timerEmail_Tick(object sender, EventArgs e)
+		{
 
-            lock (lockobj)
-            {
-                timerEmail.Enabled = false;
+			lock (lockobj)
+			{
+				timerEmail.Enabled = false;
 				ProcessMode2();
-                timerEmail.Enabled = true;
-            }
-        }
+				timerEmail.Enabled = true;
+			}
+		}
 
 		private void timerClean_Tick(object sender, EventArgs e)
 		{
 
 		}
 
-        private void timerThread_Tick(object sender, EventArgs e)
-        {
-            timerThread.Enabled = false;
-            ProcessMode1();
-            timerThread.Enabled = true;
-        }
+		private void timerThread_Tick(object sender, EventArgs e)
+		{
+			timerThread.Enabled = false;
+			ProcessMode1();
+			timerThread.Enabled = true;
+		}
 
-        private void UpdateGrid(ArrayList list)
+		private void UpdateGrid(ArrayList list)
 		{
 			dataGridView1.Rows.Clear();
 			int count = 7;
@@ -792,7 +805,7 @@ namespace MySweep
 				{
 					visiondata.Ys.Add(Convert.ToInt32(list[i]));
 				}
-                IsBuy = (bool)Vision.block.Outputs["IsBuy"].Value;
+				IsBuy = (bool)Vision.block.Outputs["IsBuy"].Value;
 			}
 			else
 			{
@@ -818,9 +831,9 @@ namespace MySweep
 					cogRecordDisplay1.Image = outimage;
 					cogRecordDisplay1.Record = record;
 					this.Invoke(updatemethod, data);
-                    image.Dispose();
-                    Thread.Sleep(500);
-                    Application.DoEvents();
+					image.Dispose();
+					Thread.Sleep(500);
+					Application.DoEvents();
 				}
 				catch
 				{
@@ -840,7 +853,7 @@ namespace MySweep
 				Bitmap image;
 				image = ProgramOperation.ALT(MainHwnd);
 				if (image == null)
-					return; 
+					return;
 				Vision.Run(image, 0, out data, out outimage, out record);
 				cogRecordDisplay1.Image = outimage;
 				cogRecordDisplay1.Record = record;
@@ -862,7 +875,7 @@ namespace MySweep
 				Bitmap image;
 				image = ProgramOperation.ALT(MainHwnd);
 				if (image == null)
-					return; 
+					return;
 				Vision.Run(image, 1, out data, out outimage, out record);
 				cogRecordDisplay1.Image = outimage;
 				cogRecordDisplay1.Record = record;

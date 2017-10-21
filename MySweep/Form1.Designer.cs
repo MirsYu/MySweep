@@ -47,11 +47,13 @@
 			this.cogToolBlockEditV21 = new Cognex.VisionPro.ToolBlock.CogToolBlockEditV2();
 			this.cogRecordDisplay1 = new Cognex.VisionPro.CogRecordDisplay();
 			this.tabPageBase = new System.Windows.Forms.TabPage();
+			this.label3 = new System.Windows.Forms.Label();
 			this.txtBox_Name = new System.Windows.Forms.TextBox();
 			this.btnGetPicture = new System.Windows.Forms.Button();
 			this.checkBoxMail = new System.Windows.Forms.CheckBox();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.txtBoxTime = new System.Windows.Forms.TextBox();
+			this.txtBoxDelay = new System.Windows.Forms.TextBox();
 			this.txtBoxPriceLow = new System.Windows.Forms.TextBox();
 			this.txtBoxHwnd = new System.Windows.Forms.TextBox();
 			this.txtBoxPath = new System.Windows.Forms.TextBox();
@@ -59,6 +61,7 @@
 			this.labelRedMe2 = new System.Windows.Forms.Label();
 			this.labelTime = new System.Windows.Forms.Label();
 			this.labelReadME = new System.Windows.Forms.Label();
+			this.labelDelay = new System.Windows.Forms.Label();
 			this.btnStop = new System.Windows.Forms.Button();
 			this.labPriceLow = new System.Windows.Forms.Label();
 			this.radioBtnLow = new System.Windows.Forms.RadioButton();
@@ -72,9 +75,6 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.timerThread = new System.Windows.Forms.Timer(this.components);
-			this.labelDelay = new System.Windows.Forms.Label();
-			this.txtBoxDelay = new System.Windows.Forms.TextBox();
-			this.label3 = new System.Windows.Forms.Label();
 			this.tabData.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.tabPageRead.SuspendLayout();
@@ -275,6 +275,15 @@
 			this.tabPageBase.Text = "基础功能";
 			this.tabPageBase.UseVisualStyleBackColor = true;
 			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(204, 143);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(59, 12);
+			this.label3.TabIndex = 29;
+			this.label3.Text = "物品名称:";
+			// 
 			// txtBox_Name
 			// 
 			this.txtBox_Name.Location = new System.Drawing.Point(269, 135);
@@ -309,7 +318,7 @@
 			this.textBox1.Name = "textBox1";
 			this.textBox1.Size = new System.Drawing.Size(100, 21);
 			this.textBox1.TabIndex = 24;
-			this.textBox1.Text = "200";
+			this.textBox1.Text = "50";
 			// 
 			// txtBoxTime
 			// 
@@ -318,6 +327,15 @@
 			this.txtBoxTime.Size = new System.Drawing.Size(99, 21);
 			this.txtBoxTime.TabIndex = 20;
 			this.txtBoxTime.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxTime_KeyPress);
+			// 
+			// txtBoxDelay
+			// 
+			this.txtBoxDelay.Location = new System.Drawing.Point(316, 166);
+			this.txtBoxDelay.Name = "txtBoxDelay";
+			this.txtBoxDelay.Size = new System.Drawing.Size(46, 21);
+			this.txtBoxDelay.TabIndex = 10;
+			this.txtBoxDelay.Text = "50";
+			this.txtBoxDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxDelay_KeyPress);
 			// 
 			// txtBoxPriceLow
 			// 
@@ -379,6 +397,15 @@
 			this.labelReadME.Size = new System.Drawing.Size(47, 12);
 			this.labelReadME.TabIndex = 18;
 			this.labelReadME.Text = "F8:开始";
+			// 
+			// labelDelay
+			// 
+			this.labelDelay.AutoSize = true;
+			this.labelDelay.Location = new System.Drawing.Point(233, 169);
+			this.labelDelay.Name = "labelDelay";
+			this.labelDelay.Size = new System.Drawing.Size(83, 12);
+			this.labelDelay.TabIndex = 17;
+			this.labelDelay.Text = "搜索间隔(ms):";
 			// 
 			// btnStop
 			// 
@@ -504,33 +531,6 @@
 			// 
 			this.timerThread.Interval = 3600000;
 			this.timerThread.Tick += new System.EventHandler(this.timerThread_Tick);
-			// 
-			// labelDelay
-			// 
-			this.labelDelay.AutoSize = true;
-			this.labelDelay.Location = new System.Drawing.Point(233, 169);
-			this.labelDelay.Name = "labelDelay";
-			this.labelDelay.Size = new System.Drawing.Size(83, 12);
-			this.labelDelay.TabIndex = 17;
-			this.labelDelay.Text = "搜索间隔(ms):";
-			// 
-			// txtBoxDelay
-			// 
-			this.txtBoxDelay.Location = new System.Drawing.Point(316, 166);
-			this.txtBoxDelay.Name = "txtBoxDelay";
-			this.txtBoxDelay.Size = new System.Drawing.Size(46, 21);
-			this.txtBoxDelay.TabIndex = 10;
-			this.txtBoxDelay.Text = "100";
-			this.txtBoxDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxDelay_KeyPress);
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(204, 143);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(59, 12);
-			this.label3.TabIndex = 29;
-			this.label3.Text = "物品名称:";
 			// 
 			// Form1
 			// 

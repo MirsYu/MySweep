@@ -193,15 +193,18 @@ namespace MySweep
 					int searchLimit = 100;
 					int searchDelayTime = 10;
 					int searchTime = 0;
-					//pos = new Point(SearchX, SearchY);
-					//MouseMoveClick(pos, 1);  // 点击一次搜索按钮
-					DDkey(313, 200);
-					while (!IsSearchOK && searchTime < searchLimit)
-					{
-						VisionRun(2);
-						Thread.Sleep(searchDelayTime);
-						searchTime++;
-					}
+					pos = new Point(SearchX, SearchY);
+					MouseMoveClick(pos, 1);  // 点击一次搜索按钮
+					Thread.Sleep(400);
+					//DDkey(313, 150);
+
+					//DDkey(313, 0);
+					//while (!IsSearchOK && searchTime < searchLimit)
+					//{
+					//	VisionRun(2);
+					//	Thread.Sleep(searchDelayTime);
+					//	searchTime++;
+					//}
 					//if (searchTime >= searchLimit)
 					//{
 					//	IsExitInputName = false;
@@ -221,62 +224,60 @@ namespace MySweep
 						IsSearchButtonExit = false;
 						return false;
 					}
-					for (int i = 0; i < 3; i++)
+
+					if (visiondata.IsSuccess[0])
 					{
-						if (visiondata.IsSuccess[0] && visiondata.IsSuccess[1] &&
-							visiondata.IsSuccess[2] && visiondata.IsSuccess[3] &&
-							visiondata.IsSuccess[4] && visiondata.IsSuccess[5] && visiondata.IsSuccess[6])
+						if (visiondata.Prices[0] <= int.Parse(txtBoxPriceLow.Text) && visiondata.Prices[0] != 1 && visiondata.Counts[0] != 0)
 						{
-							if (visiondata.Prices[i] <= int.Parse(txtBoxPriceLow.Text) && visiondata.Prices[i] != 1 && visiondata.Counts[i] != 0)
+							//File.AppendAllText("1.txt", visiondata.Prices[i].ToString() + "\r\n");
+							//return false;
+							//Buy
+							pos = new Point(visiondata.Xs[0], visiondata.Ys[0]);
+							MouseMoveClick(pos, 2);
+							VisionRun(3);
+							if (IsBuyWindowShow)
 							{
-								//File.AppendAllText("1.txt", visiondata.Prices[i].ToString() + "\r\n");
-								//return false;
-								//Buy
-								pos = new Point(visiondata.Xs[i], visiondata.Ys[i]);
+
+								Thread.Sleep(200);
+								// 输入数量
+								pos = new Point(MaxX, MaxY);
 								MouseMoveClick(pos, 1);
-								VisionRun(3);
-								if (IsBuyWindowShow)
-								{
+								// 购买
+								pos = new Point(BuyX, BuyY);
+								MouseMoveClick(pos, 1);
+								// 确认
 
 
-									// 输入数量
-									pos = new Point(MaxX, MaxY);
-									MouseMoveClick(pos, 1);
-									// 购买
-									pos = new Point(BuyX, BuyY);
-									MouseMoveClick(pos, 1);
-									// 确认
+								pos = new Point(CheckX, CheckY);
+								MouseMoveClick(pos, 1);
+								Thread.Sleep(500);
+								// Yes
 
-									DDkey(313, 200); // enter
-													 // pos = new Point(CheckX, CheckY);
-													 //MouseMoveClick(pos, 1);
-													 //Thread.Sleep(400);
-													 // Yes
 
-									DDkey(313, 200); // enter
-													 //pos = new Point(YesX, YesY);
-													 //MouseMoveClick(pos, 1);
-													 // FailCheck
+								pos = new Point(YesX, YesY);
+								MouseMoveClick(pos, 1);
+								DDkey(313, 150);
+								// FailCheck
+								pos = new Point(FailCheckX, FailCheckY);
+								MouseMoveClick(pos, 1);
 
-									//pos = new Point(FailCheckX, FailCheckY);
-									//MouseMoveClick(pos, 1);
 
-									//Thread.Sleep(1000);
-									// 弹出数量确认框
-									// 分别找到 +1 +10 +100 最大 按钮
-									// 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
-									// 比如是+100按钮
+								// 弹出数量确认框
+								// 分别找到 +1 +10 +100 最大 按钮
+								// 因为你买的时候别人可能已经买走了一两个 最大按钮可能是用不了的
+								// 比如是+100按钮
 
-									/* pos = new Point(100, 100);
-									 MouseMoveClick(pos, 3); // 点击+100 3次
-									 MouseMoveClick(pos, 3); // 点击+100 3次
-									 MouseMoveClick(pos, 3); // 点击+100 3次
-									 pos = new Point(100, 100);
-									 MouseMoveClick(pos, 3); // 点击购买*/
+								/* pos = new Point(100, 100);
+								 MouseMoveClick(pos, 3); // 点击+100 3次
+								 MouseMoveClick(pos, 3); // 点击+100 3次
+								 MouseMoveClick(pos, 3); // 点击+100 3次
+								 pos = new Point(100, 100);
+								 MouseMoveClick(pos, 3); // 点击购买*/
 
-									// 至此购买完毕
-								}
+								// 至此购买完毕
+								DDkey(313, 200);
 							}
+
 
 						}
 
@@ -317,36 +318,42 @@ namespace MySweep
 
 		private bool ProcessMode2()
 		{
-			int allx = 250;
-			int ally = 490;
-			int getx = 400;
-			int gety = 1027;
-			int yesx = 910;
-			int yesy = 628;
-			int deletex = 497;
-			int deletey = 1027;
+			int allx = 312;
+			int ally = 225;
+			int getx = 460;
+			int gety = 800;
+			int yesx = 740;
+			int yesy = 527;
+			int deletex = 580;
+			int deletey = 800;
 
 			//全选
 			Point pos = new Point(allx, ally);
 			MouseMoveClick(pos, 1);
+			Thread.Sleep(500);
 			//领取
 			pos = new Point(getx, gety);
 			MouseMoveClick(pos, 1);
+			Thread.Sleep(500);
 			//确认
 			pos = new Point(yesx, yesy);
 			MouseMoveClick(pos, 1);
+			Thread.Sleep(500);
 			//全选
 			pos = new Point(allx, ally);
 			MouseMoveClick(pos, 1);
+			Thread.Sleep(500);
 			//删除
+			Thread.Sleep(500);
 			pos = new Point(deletex, deletey);
 			MouseMoveClick(pos, 1);
 			//确认
+			Thread.Sleep(500);
 			pos = new Point(yesx, yesy);
 			MouseMoveClick(pos, 1);
 
-			dd.str("m");//物品名称
-			Thread.Sleep(10);
+			//dd.str("o");//物品名称
+			Thread.Sleep(500);
 
 			IsBuy = false;
 			return false;
@@ -356,7 +363,7 @@ namespace MySweep
 		private void DDkey(int KeyCode, int delayTime)
 		{
 			dd.key(KeyCode, 1);
-			delayTime += new Random().Next(1, 100);
+			delayTime += new Random().Next(1, 10);
 			Thread.Sleep(delayTime);
 			dd.key(KeyCode, 2);
 		}
@@ -387,7 +394,7 @@ namespace MySweep
 		private void MouseMoveClick(Point pos, int time)
 		{
 			dd.mov(pos.X, pos.Y);
-			Thread.Sleep(new Random().Next(0, 10));
+			Thread.Sleep(new Random().Next(10, 30));
 			for (int i = 0; i < time; i++)
 			{
 				dd.btn(1);
